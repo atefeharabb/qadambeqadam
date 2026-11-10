@@ -1,44 +1,17 @@
-# قدم‌به‌قدم — نسخه MVP قابل انتشار
+Ghadam Be Ghadam | قدم به قدم
 
-یک وب‌اپ فارسی و راست‌چین برای آموزش ساخت سایت با راهنمایی مرحله‌ای.
+A supportive and user-friendly platform designed to help users move forward step by step toward their goals.
 
-## قابلیت‌های موجود
-- صفحه اصلی و مسیر یادگیری شش‌مرحله‌ای
-- انتخاب نوع سایت و تجربه کاربر
-- تمرین و ذخیره پاسخ‌ها و پیشرفت در مرورگر
-- صفحه پیشرفت و نمایه آزمایشی
-- کارگاه تغییر عنوان/توضیح و پیش‌نمایش
-- دانلود خروجی ساده HTML برای سایت نمونه
-- PWA: manifest، آیکون و service worker
-- واکنش‌گرا و پشتیبانی از reduced motion
+Ghadam Be Ghadam focuses on making personal progress easier through structured guidance, organized activities, and a simple digital experience.
 
-## محدودیت‌های مهم
-این یک MVP فرانت‌اند است؛ هنوز محصول نهایی تجاری نیست:
-- AI واقعی وصل نیست؛ راهنماها پاسخ‌های نمونه‌اند.
-- حساب کاربری/پایگاه داده/همگام‌سازی آنلاین وجود ندارد.
-- خروجی سایت ساده است و فرم‌ها یا بک‌اند واقعی ندارد.
-- انتشار سایت کاربران، پنل معلم و App Store/Google Play وجود ندارد.
-- اطلاعات فقط در مرورگر همان دستگاه ذخیره می‌شوند.
+Features
 
-برای اتصال مدل AI، کلید API را داخل JavaScript فرانت‌اند قرار ندهید. باید یک backend امن یا serverless function ساخته شود.
+* Clean and user-friendly interface
+* Step-by-step guidance
+* Organized content and activities
+* Responsive design
+* Focus on personal growth and progress
 
-## انتشار از گوشی با GitHub Pages
-1. ZIP را استخراج کنید.
-2. در GitHub یک مخزن بسازید (مثلاً `qadam-be-qadam`).
-3. همه فایل‌های این پوشه را در ریشه مخزن آپلود کنید؛ `index.html` باید در ریشه باشد.
-4. مخزن → Settings → Pages.
-5. در Build and deployment گزینه Deploy from a branch را انتخاب کنید.
-6. Branch: `main` و Folder: `/(root)`، سپس Save.
-7. چند دقیقه بعد آدرس منتشرشده را باز کنید.
+About
 
-## افزودن به صفحه اصلی آیفون
-آدرس GitHub Pages را در Safari باز کنید → Share → Add to Home Screen → Add.
-این یک PWA است، نه اپ بومی App Store.
-
-## پیشنهاد توسعه بعدی
-1. طراحی API و backend امن
-2. ورود و ثبت‌نام و پایگاه داده
-3. اتصال دستیار AI از سمت سرور
-4. موتور ساخت/ویرایش کد سایت و preview ایزوله
-5. انتشار سایت کاربر، مدیریت دامنه و میزبانی
-6. تست امنیت، دسترس‌پذیری و حریم خصوصی، مخصوصاً برای کاربران کم‌سن
+Ghadam Be Ghadam is a digital project built around the idea that every big achievement starts with a small step. Its goal is to make the journey toward learning, growth, and success more accessible and manageable.
