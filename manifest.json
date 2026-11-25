@@ -1,13 +1,15 @@
 {
-  "name": "قدم‌به‌قدم | آکادمی ساخت سایت با هوش مصنوعی",
+  "name": "قدم‌به‌قدم | آموزش ساخت سایت برای همه",
   "short_name": "قدم‌به‌قدم",
-  "description": "از ایده تا ساخت اولین سایت",
+  "description": "از ایده تا ساخت اولین سایت، با شش درس کوتاه و راهنمای کامل فارسی. مناسب برای همه سنین.",
   "lang": "fa",
   "dir": "rtl",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#f7f8fc",
+  "orientation": "any",
+  "categories": ["education", "productivity"],
+  "background_color": "#f6f7fc",
   "theme_color": "#6558e8",
   "icons": [
     {

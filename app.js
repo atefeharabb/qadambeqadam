@@ -1,26 +1,1319 @@
-const main=document.querySelector("#main"),toast=document.querySelector("#toast"),KEY="qadam-final-v1";
-const base={page:"home",type:"",name:"",experience:"beginner",idea:"",done:[],answers:{},previewTitle:"ایده‌ات را به واقعیت تبدیل کن",previewDesc:"اینجا جایی است که ایده‌های خوب شروع می‌شوند.",previewName:""};
-let s=read();function read(){try{return {...base,...JSON.parse(localStorage.getItem(KEY)||"{}")}}catch{return {...base}}}function save(){localStorage.setItem(KEY,JSON.stringify(s))}
-const lessons=[
-{title:"ایده‌ات را مشخص کن",desc:"قبل از ساخت سایت، باید بدانیم قرار است چه کمکی به مخاطبت بکنی. لازم نیست همه‌چیز را از اول بدانی.",tip:"یک سایت خوب از یک هدف روشن شروع می‌شود.",task:"در یک جمله بنویس سایتت قرار است چه کاری انجام دهد.",placeholder:"مثلاً می‌خواهم برای شیرینی‌فروشی‌ام یک سایت معرفی بسازم...",hint:"فکر کن چه کسی وارد سایت می‌شود و دنبال چه چیزی می‌گردد."},
-{title:"درخواست خوب بنویس",desc:"هوش مصنوعی وقتی بهتر کمکت می‌کند که هدف، مخاطب و جزئیات مهم را واضح توضیح بدهی.",tip:"درخواست خوب = هدف + مخاطب + جزئیات مهم",task:"یک درخواست برای ساخت سایتت بنویس.",placeholder:"برای کسب‌وکار من یک سایت ساده طراحی کن...",hint:"بگو سایت برای چه کسی است و چه بخش‌هایی باید داشته باشد."},
-{title:"ظاهر سایتت را انتخاب کن",desc:"ظاهر سایت باید زیبا باشد و پیدا کردن اطلاعات را آسان کند. از تصمیم‌های ساده شروع می‌کنیم.",tip:"رنگ و چیدمان باید به هدف سایت کمک کنند.",task:"اسم سایت و سبک دلخواهت را بنویس.",placeholder:"نام سایت و حس‌وحال موردنظرت...",hint:"برای شروع دو رنگ اصلی و یک سبک ساده کافی است."},
-{title:"صفحه اول را بساز",desc:"صفحه اول معمولاً یک عنوان واضح، توضیح کوتاه، دکمه اصلی و بخش‌هایی درباره خدمات یا محتوا دارد.",tip:"قرار نیست از همان ابتدا همه‌چیز کامل باشد.",task:"عنوان و توضیح کوتاه سایتت را بنویس.",placeholder:"عنوان اصلی سایت من...",hint:"عنوان باید در چند کلمه بگوید این سایت چه چیزی ارائه می‌دهد."},
-{title:"سایتت را بررسی کن",desc:"قبل از انتشار، سایت را مثل یک بازدیدکننده امتحان کن: متن‌ها خوانا هستند؟ دکمه‌ها کار می‌کنند؟ روی موبایل خوب است؟",tip:"پیدا کردن اشتباه بخشی طبیعی از ساختن است.",task:"سه موردی را که باید بررسی کنی بنویس.",placeholder:"مثلاً لینک‌ها، خوانایی متن و نمایش موبایل...",hint:"سایت را هم با اندازه صفحه موبایل بررسی کن."},
-{title:"برای انتشار آماده شو",desc:"انتشار یعنی قرار دادن سایت روی اینترنت تا دیگران بتوانند با یک لینک آن را ببینند.",tip:"برای انتشار واقعی، میزبانی و آدرس سایت باید تنظیم شوند.",task:"یک آدرس کوتاه برای سایتت پیشنهاد بده.",placeholder:"مثلاً my-sweet-shop...",hint:"آدرسی کوتاه، ساده و به‌یادماندنی انتخاب کن."}
+/* قدم‌به‌قدم — آکادمی ساخت سایت برای همه
+   نسخه ۲: راهنمای کامل استفاده، راهنمای سنی، درس‌های گسترده، کارگاه و نشان‌ها */
+(function () {
+"use strict";
+
+const main = document.querySelector("#main");
+const toast = document.querySelector("#toast");
+const KEY = "qadam-v2";
+const OLD_KEY = "qadam-final-v1";
+const sizeList = ["normal", "large", "xlarge"];
+const sizeLabels = { normal: "عادی", large: "بزرگ", xlarge: "خیلی بزرگ" };
+
+const accents = [
+  ["violet", "#6558e8", "بنفش آرام"],
+  ["ocean", "#0e7490", "آبی اقیانوس"],
+  ["forest", "#15803d", "سبز آرام"],
+  ["amber", "#b45309", "کهربایی"],
+  ["rose", "#be185d", "گلبهی"],
+  ["slate", "#334155", "خاکستری جدی"]
 ];
-const types=[["shop","🛍️","فروشگاه اینترنتی","فروش محصول و خدمات"],["personal","👤","سایت شخصی","معرفی خودت و نمونه‌کارها"],["business","🏢","معرفی کسب‌وکار","خدمات و راه‌های تماس"],["education","🎓","سایت آموزشی","آموزش و یادگیری"],["blog","✍️","وبلاگ","نوشتن و انتشار مطلب"],["other","💡","یک ایده دیگر","ایده خودت را تعریف کن"]];
-function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}function num(n){return String(n).replace(/\d/g,d=>"۰۱۲۳۴۵۶۷۸۹"[d])}function ping(t){toast.textContent=t;toast.classList.add("show");setTimeout(()=>toast.classList.remove("show"),2400)}function go(p){s.page=p;save();render();window.scrollTo({top:0,behavior:"smooth"})}
-function headerNav(){document.querySelectorAll(".nav").forEach(b=>b.classList.toggle("active",b.dataset.page===s.page))}
-function render(){s=read();headerNav();if(s.page==="home")home();else if(s.page==="onboarding")onboarding();else if(s.page==="path")path();else if(s.page==="lesson")lesson();else if(s.page==="builder")builder();else if(s.page==="progress")progress();else if(s.page==="profile")profile();main.focus({preventScroll:true})}
-function home(){main.innerHTML=`<section class="hero card"><span class="eyebrow">✦ آکادمی ساخت سایت با هوش مصنوعی</span><h1>ایده‌ات را به سایت تبدیل کن؛<br><span>قدم‌به‌قدم.</span></h1><p>لازم نیست برنامه‌نویسی بلد باشی. از یک ایده ساده شروع کن و کم‌کم سایت خودت را بساز.</p><button class="button primary" data-do="start">از صفر شروع کن ←</button><div class="hero-visual" aria-hidden="true"><div class="browser"><div class="dots"><i></i><i></i><i></i></div><div class="mock"><div class="mockline"></div><div class="mocktitle"></div><div class="mockline"></div><div class="mockbtn"></div><div class="mockblock"></div></div></div><div class="float">✦ ایده‌ات داره شکل می‌گیره!</div></div></section><section class="section"><div class="section-head"><div><span class="eyebrow">مسیر تو</span><h2>چطور کار می‌کنه؟</h2></div><span class="pill">${num(Math.round(s.done.length/6*100))}٪ کامل</span></div><div class="three"><article class="step"><span class="stepicon">✦</span><h3>یاد بگیر</h3><p>با توضیح‌های ساده و مثال‌های واقعی.</p></article><article class="step"><span class="stepicon">⌘</span><h3>تمرین کن</h3><p>همان لحظه آموخته‌هایت را اجرا کن.</p></article><article class="step"><span class="stepicon">↗</span><h3>بساز</h3><p>قدم‌به‌قدم سایت خودت را شکل بده.</p></article></div></section><section class="section card roadmap"><div class="section-head"><div><span class="eyebrow">از ایده تا انتشار</span><h2>مسیر یادگیری تو</h2></div><span class="pill">۶ قدم</span></div><div class="roadmap-grid">${lessons.map((l,i)=>`<div class="roaditem"><span class="number">${s.done.includes(i)?"✓":num(i+1)}</span><div><b>${l.title}</b><small>${s.done.includes(i)?"تکمیل شده":i===s.done.length?"قدم بعدی تو":"به ترتیب پیش برو"}</small></div></div>`).join("")}</div><button class="button secondary full" data-do="path">دیدن مسیر یادگیری ←</button></section><section class="cta"><span class="eyebrow">هر سایت بزرگی از یک ایده شروع می‌شود</span><h2>اولین سایتت منتظر توئه.</h2><button class="button primary" data-do="start">شروع یادگیری رایگان ←</button></section>`}
-function onboarding(){main.innerHTML=`<section class="screen"><button class="back" data-do="home">→ برگشت به خانه</button><span class="eyebrow">قدم اول از سه قدم</span><h1>دوست داری چه سایتی بسازی؟</h1><p class="intro">یکی را انتخاب کن؛ بعد مسیر مناسبش را می‌چینیم.</p><div class="choices">${types.map(t=>`<button class="choice ${s.type===t[0]?"selected":""}" data-type="${t[0]}"><span>${t[1]}</span><b>${t[2]}</b><small>${t[3]}</small></button>`).join("")}</div><label class="label" for="name">اسم سایتت (اگر انتخاب کردی)</label><input id="name" class="input" value="${esc(s.name)}" placeholder="مثلاً شیرین‌خونه"><label class="label" for="exp">چقدر با ساخت سایت آشنایی داری؟</label><select id="exp" class="select"><option value="beginner" ${s.experience==="beginner"?"selected":""}>تقریباً هیچ‌چیز نمی‌دانم</option><option value="some" ${s.experience==="some"?"selected":""}>کمی تجربه دارم</option><option value="experienced" ${s.experience==="experienced"?"selected":""}>قبلاً سایت ساخته‌ام</option></select><label class="label" for="idea">در یک جمله بگو سایتت برای چیست</label><textarea id="idea" class="textarea" placeholder="مثلاً می‌خواهم محصولات دست‌سازم را معرفی کنم...">${esc(s.idea)}</textarea><button class="button primary full" data-do="save-onboarding">ساخت مسیر یادگیری ←</button></section>`}
-function path(){main.innerHTML=`<section class="screen"><span class="eyebrow">مسیر شخصی تو</span><h1>آماده‌ای شروع کنیم؟</h1><p class="intro">هر بار فقط روی یک کار تمرکز می‌کنیم.</p><div class="card" style="padding:18px;margin-bottom:14px"><div class="section-head"><div><b>${esc(s.name||types.find(t=>t[0]===s.type)?.[2]||"اولین سایت من")}</b><small class="muted" style="display:block">مسیر یادگیری قدم‌به‌قدم</small></div><b style="color:var(--p)">${num(Math.round(s.done.length/6*100))}٪</b></div><div class="progressbar"><span style="width:${s.done.length/6*100}%"></span></div><small class="muted">${num(s.done.length)} از ۶ قدم کامل شده</small></div><div class="roadmap-grid">${lessons.map((l,i)=>`<button class="roaditem" data-lesson="${i}"><span class="number" style="${s.done.includes(i)?"background:var(--mint);color:#128366":""}">${s.done.includes(i)?"✓":num(i+1)}</span><div><b>${l.title}</b><small>${s.done.includes(i)?"تکمیل شده":i===s.done.length?"قدم بعدی تو":"بعد از قدم قبلی"}</small></div><span>${i<=s.done.length?"←":"🔒"}</span></button>`).join("")}</div><button class="button primary full" data-do="lesson">ادامه یادگیری ←</button></section>`}
-function lesson(){let idx=Math.min(s.done.length,5);if(s.editLesson!==undefined)idx=s.editLesson;let l=lessons[idx];main.innerHTML=`<section class="screen"><button class="back" data-do="path">→ مسیر یادگیری</button><div class="lessonbox card"><div class="lessonmeta"><span>قدم ${num(idx+1)} از ۶</span><span>⏱ حدود ۳ دقیقه</span></div><div class="progressbar"><span style="width:${(idx+1)/6*100}%"></span></div><span class="eyebrow">درس کوتاه و کاربردی</span><h1>${l.title}</h1><p class="intro">${l.desc}</p><div class="tip"><b>💡 نکته مهم</b>${l.tip}</div><label class="label" for="answer">${l.task}</label><textarea id="answer" class="textarea" placeholder="${l.placeholder}">${esc(s.answers[idx]||"")}</textarea><button class="hint" data-do="hint">✦ کمکم کن</button><div id="hintarea"></div><div class="rowbuttons"><button class="button secondary" data-do="help">راهنما</button><button class="button primary" data-do="complete" data-idx="${idx}">${idx===5?"پایان مسیر":"انجام شد، ادامه بده"} ←</button></div></div><div class="assistant"><div class="assistanthead"><span class="aiicon">✧</span><div><b>همراه یادگیری تو</b><small>راهنمای ساده و قدم‌به‌قدم</small></div></div><div class="bubble" id="bubble">اگر جایی گیر کردی، سؤالت را بنویس. با هم ساده‌اش می‌کنیم.</div><div class="chatrow"><input class="input" id="question" placeholder="چی برات مبهمه؟"><button class="button secondary" data-do="ask">بپرس</button></div><span class="note">نسخه فعلی هنوز به هوش مصنوعی واقعی متصل نیست؛ پاسخ‌ها نمونه‌اند.</span></div></section>`}
-function builder(){main.innerHTML=`<section class="screen"><span class="eyebrow">کارگاه ساخت سایت</span><h1>پیش‌نمایش سایتت را بساز.</h1><p class="intro">عنوان و توضیحات را تغییر بده تا پیش‌نمایش به‌روز شود. از دکمه دریافت فایل می‌توانی یک صفحه HTML ساده بسازی.</p><label class="label" for="pname">نام سایت</label><input id="pname" class="input" value="${esc(s.previewName||s.name||"سایت من")}"><label class="label" for="ptitle">عنوان اصلی صفحه</label><input id="ptitle" class="input" value="${esc(s.previewTitle)}"><label class="label" for="pdesc">توضیح کوتاه</label><textarea id="pdesc" class="textarea">${esc(s.previewDesc)}</textarea><button class="button primary full" data-do="update-preview">به‌روزرسانی پیش‌نمایش</button><button class="button secondary full" data-do="download-site">دریافت فایل HTML سایت نمونه</button><div class="preview"><div class="previewbar"><b id="pvname">${esc(s.previewName||s.name||"سایت من")}</b><span>پیش‌نمایش زنده</span></div><div class="previewpage"><span class="eyebrow">به سایت من خوش آمدی</span><h2 id="pvtitle">${esc(s.previewTitle)}</h2><p id="pvdesc">${esc(s.previewDesc)}</p><button class="button primary" data-do="preview-button">بیشتر بدان</button><div class="tiles"><div class="tile"></div><div class="tile"></div><div class="tile"></div></div></div></div><div class="tip" style="margin-top:16px"><b>محدودیت نسخه فعلی</b>این فایل یک صفحه HTML ساده و قابل دانلود است. اتصال به AI واقعی، فرم‌های فعال و انتشار خودکار سایت هنوز نیاز به توسعه سرور دارد.</div></section>`}
-function progress(){main.innerHTML=`<section class="screen"><span class="eyebrow">مسیر پیشرفت تو</span><h1>ببین تا اینجا چه ساختی.</h1><p class="intro">هر تمرین کوچکی تو را یک قدم به سایت واقعی نزدیک‌تر می‌کند.</p><div class="statgrid"><div class="stat"><strong>${num(s.done.length)}</strong><small>درس کامل‌شده از ۶</small></div><div class="stat"><strong>${num(Math.round(s.done.length/6*100))}٪</strong><small>پیشرفت مسیر</small></div></div><div class="card" style="padding:18px;margin-top:14px"><h3>قدم‌های تو</h3>${lessons.map((l,i)=>`<div class="settingrow"><span>${s.done.includes(i)?"✅":"○"} ${l.title}</span><b>${s.done.includes(i)?"تکمیل شد":"در انتظار"}</b></div>`).join("")}</div><button class="button primary full" data-do="path">برگشت به مسیر ←</button></section>`}
-function profile(){main.innerHTML=`<section class="screen"><button class="back" data-do="home">→ خانه</button><div class="profile card"><div class="assistanthead"><span class="aiicon">ع</span><div><h1 style="font-size:22px;margin:0">نمایه من</h1><small>حساب آزمایشی روی همین دستگاه</small></div></div><div class="settingrow"><span>پروژه فعلی</span><b>${esc(s.name||"اولین سایت من")}</b></div><div class="settingrow"><span>قدم‌های کامل‌شده</span><b>${num(s.done.length)} از ۶</b></div><div class="settingrow"><span>اتصال هوش مصنوعی</span><b>هنوز متصل نیست</b></div><button class="button secondary full" data-do="reset">شروع از ابتدا</button><p class="muted" style="font-size:11px;margin-top:12px">اطلاعات روی مرورگر همین دستگاه ذخیره می‌شود. این نسخه حساب آنلاین ندارد.</p></div></section>`}
-function aiReply(q){q=q.toLowerCase();if(q.includes("دامنه")||q.includes("آدرس"))return"دامنه همان آدرسی است که مردم در مرورگر وارد می‌کنند تا سایتت را پیدا کنند؛ مثل آدرس یک مغازه در اینترنت.";if(q.includes("پرامپت")||q.includes("درخواست"))return"درخواستت را با سه چیز واضح‌تر کن: سایت برای چه کاری است، چه کسی از آن استفاده می‌کند و چه بخش‌هایی لازم دارد.";if(q.includes("کد")||q.includes("برنامه"))return"فعلاً لازم نیست همه کدها را یاد بگیری. اول هدف و ظاهر سایتت را مشخص کن؛ بعد هر بخش فنی را با یک مثال ساده یاد می‌گیری.";return"سؤال خوبیه! بگو دقیقاً کدام قسمت برات مبهمه. این نسخه هنوز به دستیار هوش مصنوعی واقعی متصل نیست و پاسخ‌هایش محدودند."}
-document.addEventListener("click",e=>{const p=e.target.closest("[data-page]");if(p){go(p.dataset.page);return}const typ=e.target.closest("[data-type]");if(typ){s.type=typ.dataset.type;save();onboarding();return}const li=e.target.closest("[data-lesson]");if(li){let i=+li.dataset.lesson;if(i<=s.done.length){s.editLesson=i;go("lesson")}else ping("اول قدم قبلی را انجام بده.");return}const b=e.target.closest("[data-do]");if(!b)return;switch(b.dataset.do){case"start":go("onboarding");break;case"home":go("home");break;case"path":go("path");break;case"lesson":delete s.editLesson;go("lesson");break;case"save-onboarding":s.name=document.querySelector("#name").value.trim();s.experience=document.querySelector("#exp").value;s.idea=document.querySelector("#idea").value.trim();if(!s.type){ping("اول یک نوع سایت انتخاب کن.");break}if(!s.idea){ping("در یک جمله بگو سایتت برای چیست.");break}save();delete s.editLesson;go("lesson");break;case"hint":document.querySelector("#hintarea").innerHTML=`<div class="tip"><b>یک راهنمای کوچک</b>${lessons[Math.min(s.editLesson??s.done.length,5)].hint}</div>`;break;case"help":document.querySelector("#hintarea").innerHTML=`<div class="bubble">${esc(aiReply(document.querySelector("#answer").value||s.idea))}</div><span class="note">پاسخ نمونه، بدون اتصال به سرویس AI</span>`;break;case"ask":{let q=document.querySelector("#question").value.trim();if(!q){ping("اول سؤالت را بنویس.");break}document.querySelector("#bubble").textContent=aiReply(q);document.querySelector("#question").value="";break}case"complete":{let i=+b.dataset.idx,a=document.querySelector("#answer").value.trim();if(!a){ping("اول تمرین کوتاه را انجام بده.");break}s.answers[i]=a;if(!s.done.includes(i))s.done.push(i);s.done.sort((x,y)=>x-y);delete s.editLesson;save();if(s.done.length===6){go("progress");ping("آفرین! مسیر اولیه را کامل کردی.")}else go("lesson");break}case"update-preview":s.previewName=document.querySelector("#pname").value.trim()||"سایت من";s.previewTitle=document.querySelector("#ptitle").value.trim()||"ایده‌ات را به واقعیت تبدیل کن";s.previewDesc=document.querySelector("#pdesc").value.trim();save();builder();ping("پیش‌نمایش به‌روز شد.");break;case"download-site":downloadSite();break;case"preview-button":ping("این دکمه در پیش‌نمایش نمایشی است.");break;case"reset":if(confirm("پیشرفت و تنظیمات آزمایشی پاک شود؟")){localStorage.removeItem(KEY);s={...base};go("home");ping("شروع تازه آماده است.")}break}});
-function downloadSite(){let name=esc(s.previewName||s.name||"سایت من"),title=esc(s.previewTitle),desc=esc(s.previewDesc);let html=`<!doctype html><html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title><style>body{font-family:Tahoma,sans-serif;background:#f7f8fc;color:#1b2140;margin:0;padding:24px;line-height:1.9}.wrap{max-width:850px;margin:30px auto;background:white;padding:28px;border-radius:24px;text-align:center;box-shadow:0 12px 40px #2222}h1{color:#6558e8}p{color:#666}a{display:inline-block;background:#6558e8;color:white;text-decoration:none;padding:10px 18px;border-radius:12px}</style></head><body><main class="wrap"><small>${name}</small><h1>${title}</h1><p>${desc}</p><a href="mailto:hello@example.com">ارتباط با ما</a></main></body></html>`;let blob=new Blob([html],{type:"text/html;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="my-website.html";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);ping("فایل HTML ساخته شد؛ برای انتشار باید آن را روی یک سرویس میزبانی قرار بدهی.")}
-if("serviceWorker"in navigator&&location.protocol.startsWith("http"))addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));render();
+
+const experiences = {
+  beginner: "تازه شروع کرده‌ام",
+  some: "کمی تجربه دارم",
+  experienced: "قبلاً سایت ساخته‌ام"
+};
+
+const base = {
+  page: "home",
+  type: "",
+  name: "",
+  experience: "beginner",
+  idea: "",
+  done: [],
+  answers: {},
+  previewTitle: "ایده‌ات را به واقعیت تبدیل کن",
+  previewDesc: "اینجا جایی است که ایده‌های خوب شروع می‌شوند.",
+  previewName: "",
+  accent: "violet",
+  textSize: "normal"
+};
+
+let s = load();
+
+function load() {
+  try {
+    const raw = localStorage.getItem(KEY) || localStorage.getItem(OLD_KEY) || "{}";
+    const saved = JSON.parse(raw);
+    const merged = Object.assign({}, base, saved);
+    if (!Array.isArray(merged.done)) merged.done = [];
+    if (!merged.answers || typeof merged.answers !== "object") merged.answers = {};
+    if (sizeList.indexOf(merged.textSize) === -1) merged.textSize = "normal";
+    if (!accents.some(function (item) { return item[0] === merged.accent; })) merged.accent = "violet";
+    return merged;
+  } catch (error) {
+    return Object.assign({}, base);
+  }
+}
+
+function save() {
+  try {
+    localStorage.setItem(KEY, JSON.stringify(s));
+  } catch (error) {
+    /* اگر مرورگر اجازهٔ ذخیره ندهد، برنامه بدون ذخیره هم کار می‌کند */
+  }
+}
+
+function esc(value) {
+  return String(value == null ? "" : value).replace(/[&<>"']/g, function (character) {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[character];
+  });
+}
+
+function num(value) {
+  return String(value).replace(/\d/g, function (digit) {
+    return "۰۱۲۳۴۵۶۷۸۹"[Number(digit)];
+  });
+}
+
+function ping(message) {
+  toast.textContent = message;
+  toast.classList.add("show");
+  clearTimeout(ping.timer);
+  ping.timer = setTimeout(function () { toast.classList.remove("show"); }, 3000);
+}
+
+function motionOff() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function applySize() {
+  document.documentElement.dataset.size = s.textSize;
+  const button = document.querySelector(".sizebtn");
+  if (!button) return;
+  const next = sizeList[(sizeList.indexOf(s.textSize) + 1) % sizeList.length];
+  button.setAttribute("aria-label", "اندازهٔ متن: " + sizeLabels[s.textSize] + ". برای رفتن به حالت " + sizeLabels[next] + " فشار بده");
+  button.title = "اندازهٔ متن: " + sizeLabels[s.textSize] + " (برای تغییر فشار بده)";
+}
+
+function scrollToId(id) {
+  const target = document.getElementById(id);
+  if (!target) return;
+  target.scrollIntoView({ behavior: motionOff() ? "auto" : "smooth", block: "start" });
+}
+
+function go(page) {
+  s.page = page;
+  delete s.editLesson;
+  save();
+  render();
+  window.scrollTo({ top: 0, behavior: motionOff() ? "auto" : "smooth" });
+}
+
+function goHomeSection(id) {
+  if (s.page !== "home") {
+    s.page = "home";
+    delete s.editLesson;
+    save();
+    render();
+  }
+  requestAnimationFrame(function () { scrollToId(id); });
+}
+
+function progressPercent() {
+  return Math.round((s.done.length / 6) * 100);
+}
+
+function typeName() {
+  const found = siteTypes.find(function (item) { return item[0] === s.type; });
+  return found ? found[2] : "اولین سایت من";
+}
+
+function syncNav() {
+  const active = s.page === "lesson" ? "path" : s.page;
+  document.querySelectorAll(".dnav, .nav").forEach(function (button) {
+    const on = button.dataset.page === active;
+    button.classList.toggle("active", on);
+    if (on) button.setAttribute("aria-current", "page");
+    else button.removeAttribute("aria-current");
+  });
+}
+
+function render() {
+  s = load();
+  applySize();
+  syncNav();
+  if (s.page === "home") home();
+  else if (s.page === "guide") guide();
+  else if (s.page === "onboarding") onboarding();
+  else if (s.page === "path") path();
+  else if (s.page === "lesson") lesson();
+  else if (s.page === "builder") builder();
+  else if (s.page === "progress") progress();
+  else if (s.page === "profile") profile();
+  else home();
+  main.focus({ preventScroll: true });
+}
+
+/* ---------------- محتوا ---------------- */
+
+const lessons = [
+  {
+    title: "ایده‌ات را مشخص کن",
+    minutes: 4,
+    desc: "قبل از انتخاب رنگ و ساختن صفحه، باید بدانیم سایت قرار است چه کمکی به مخاطب بکند. یک سایت خوب از یک جملهٔ روشن شروع می‌شود، نه از یک طرح شلوغ.",
+    why: "اگر هدف روشن نباشد، هر تصمیم بعدی — رنگ، متن، بخش‌ها — سلیقه‌ای می‌شود و کار عقب می‌افتد. یک جملهٔ روشن، قطب‌نمای همهٔ قدم‌های بعدی است.",
+    checklist: [
+      "بدانم مخاطب اصلی من کیست",
+      "بدانم او با چه نیازی به سایت من می‌آید",
+      "بدانم مهم‌ترین کاری که باید در سایت انجام دهد چیست"
+    ],
+    example: "«می‌خواهم یک سایت کوچک داشته باشم تا همسایه‌ها شیرینی‌های خانگی من را ببینند و با یک پیام سفارش بدهند.»",
+    tip: "لازم نیست همه‌چیز را از اول بدانی؛ فقط بنویس سایت برای چه کسی است و چه کاری برایش انجام می‌دهد.",
+    task: "در یک جمله بنویس سایتت قرار است چه کاری انجام دهد.",
+    placeholder: "مثلاً می‌خواهم برای شیرینی‌فروشی‌ام یک سایت معرفی بسازم...",
+    hint: "فکر کن چه کسی وارد سایت می‌شود و دنبال چه چیزی می‌گردد. همان را در جمله بگذار."
+  },
+  {
+    title: "درخواست خوب بنویس",
+    minutes: 5,
+    desc: "وقتی از یک طراح یا هوش مصنوعی کمک می‌گیری، هرچه خواسته‌ات روشن‌تر باشد نتیجه بهتر است. یک درخواست خوب چهار بخش دارد: هدف، مخاطب، بخش‌های لازم و لحن.",
+    why: "درخواست مبهم، نتیجهٔ مبهم می‌دهد. وقتی می‌گویی سایت «برای چه کسی» و «با چه بخش‌هایی» است، خیلی کمتر باید دوباره و دوباره اصلاح کنی.",
+    checklist: [
+      "هدف سایت را نوشته‌ام",
+      "مخاطب را مشخص کرده‌ام",
+      "فهرست بخش‌های اصلی را نوشته‌ام",
+      "لحن را انتخاب کرده‌ام: گرم، رسمی یا ساده"
+    ],
+    example: "«یک صفحهٔ اصلی برای شیرینی‌فروشی خانگی بساز. مخاطب: ساکنان محله. بخش‌ها: معرفی کوتاه، منوی امروز با سه آیتم، نظر مشتری‌ها، راه تماس. لحن: گرم و ساده. رنگ‌ها: کرم و قهوه‌ای روشن.»",
+    tip: "درخواست خوب = هدف + مخاطب + بخش‌های مهم + لحن. همین چهار چیز بیشترین تفاوت را می‌سازند.",
+    task: "یک درخواست برای ساخت سایتت بنویس.",
+    placeholder: "برای کسب‌وکار من یک سایت ساده طراحی کن که شامل...",
+    hint: "بگو چه کسی سایت را می‌بیند، چه کاری باید بکند و چه بخش‌هایی لازم دارد."
+  },
+  {
+    title: "ظاهر سایتت را انتخاب کن",
+    minutes: 4,
+    desc: "ظاهر سایت باید زیبا و در همان حال خوانا باشد. از تصمیم‌های ساده شروع می‌کنیم: یک رنگ اصلی، یک رنگ روشن، یک فونت خوانا و فاصلهٔ کافی بین متن‌ها.",
+    why: "زیبایی بدون خوانایی هیچ فایده‌ای ندارد. بیشتر کاربران با موبایل و در نور کم سایت را می‌بینند؛ کنتراست خوب یعنی همه بتوانند متن را بخوانند.",
+    checklist: [
+      "یک رنگ اصلی انتخاب کرده‌ام",
+      "متن روی پس‌زمینه به‌راحتی خوانده می‌شود",
+      "اندازهٔ متن روی موبایل بزرگ و خوانا است",
+      "بیش از سه رنگ اصلی استفاده نکرده‌ام"
+    ],
+    example: "رنگ اصلی بنفش، پس‌زمینهٔ روشن و خاکستری برای متن. دکمه‌های اصلی همیشه با همان رنگ بنفش؛ تا چشم یاد بگیرد «هر جا بنفش دیدی، می‌توانی کلیک کنی».",
+    tip: "قرار نیست از همان ابتدا بهترین طرح دنیا را بسازی؛ یک طرح ساده و خوانا از یک طرح شلوغ بهتر است.",
+    task: "اسم سایت و سبک دلخواهت را بنویس.",
+    placeholder: "نام سایت و حس‌وحال موردنظرت...",
+    hint: "برای شروع دو رنگ اصلی و یک سبک ساده کافی است: مینیمال، گرم، رسمی یا بازیگوش."
+  },
+  {
+    title: "صفحهٔ اول را بساز",
+    minutes: 5,
+    desc: "صفحهٔ اول مهم‌ترین صفحهٔ سایت است. معمولاً یک عنوان واضح، یک توضیح کوتاه، یک دکمهٔ اصلی و چند بخش دربارهٔ خدمات یا محتوا دارد.",
+    why: "بازدیدکننده در چند ثانیهٔ اول تصمیم می‌گیرد بماند یا برود. اگر در همان لحظه بفهمد اینجا چه چیزی پیدا می‌کند، بیشتر می‌ماند.",
+    checklist: [
+      "عنوان در چند کلمه می‌گوید سایت چیست",
+      "یک دکمهٔ اصلی و واضح دارم",
+      "بخش‌ها را ساده و کوتاه نوشته‌ام",
+      "برای هر بخش تصویر یا مثال دارم"
+    ],
+    example: "عنوان: «شیرینی خانگی، تازه و ساده». توضیح: «هر روز صبح تازه می‌پزیم؛ منوی امروز را ببین و با یک پیام سفارش بده.» دکمه: «دیدن منوی امروز».",
+    tip: "قرار نیست از همان ابتدا همه‌چیز کامل باشد. اول نسخهٔ ساده را بساز، بعد بهترش کن.",
+    task: "عنوان و توضیح کوتاه سایتت را بنویس.",
+    placeholder: "عنوان اصلی سایت من...",
+    hint: "عنوان باید در چند کلمه بگوید این سایت چه چیزی ارائه می‌دهد؛ توضیح هم یک جملهٔ کوتاه دربارهٔ فایدهٔ آن است."
+  },
+  {
+    title: "سایتت را بررسی کن",
+    minutes: 5,
+    desc: "قبل از انتشار، سایت را مثل یک بازدیدکنندهٔ عادی امتحان کن. متن‌ها خوانا هستند؟ دکمه‌ها کار می‌کنند؟ روی موبایل هم خوب به نظر می‌رسد؟",
+    why: "پیدا کردن اشتباه بخشی طبیعی از ساختن است. هر چه زودتر اشکال‌ها را ببینی، اصلاحشان ساده‌تر و ارزان‌تر است.",
+    checklist: [
+      "سایت را با اندازهٔ صفحهٔ موبایل بررسی کرده‌ام",
+      "همهٔ دکمه‌ها و لینک‌ها را امتحان کرده‌ام",
+      "متن‌ها را با صدای بلند خوانده‌ام و روان بوده‌اند",
+      "از یک دوست خواسته‌ام سایت را ببیند و بگوید چه چیزی گیج‌کننده است"
+    ],
+    example: "چک‌لیست سریع: عنوان خوانا؟ دکمه در دسترس؟ متن جایگزین تصویر؟ سرعت باز شدن در اینترنت ضعیف؟ اگر جواب همه بله بود، آماده‌ای.",
+    tip: "یک سایت سادهٔ سالم بهتر از یک سایت شلوغ با لینک‌های خراب است.",
+    task: "سه موردی را که باید بررسی کنی بنویس.",
+    placeholder: "مثلاً لینک‌ها، خوانایی متن و نمایش موبایل...",
+    hint: "سایت را هم با اندازهٔ صفحهٔ موبایل بررسی کن؛ بیشتر بازدیدکننده‌ها با موبایل می‌آیند."
+  },
+  {
+    title: "برای انتشار آماده شو",
+    minutes: 5,
+    desc: "انتشار یعنی قرار دادن سایت روی اینترنت تا دیگران بتوانند با یک لینک آن را ببینند. برای این کار به میزبانی و یک آدرس اینترنتی نیاز داری.",
+    why: "تا زمانی که سایت منتشر نشود، فقط خودت آن را می‌بینی. انتشار، ایده را از یک تمرین شخصی به یک چیز واقعی تبدیل می‌کند.",
+    checklist: [
+      "یک نام کوتاه و به‌یادماندنی برای سایت انتخاب کرده‌ام",
+      "می‌دانم میزبانی چیست و از کجا می‌گیرم",
+      "حریم خصوصی را بررسی کرده‌ام: چه اطلاعاتی از من روی سایت است",
+      "می‌دانم بعد از انتشار چطور محتوا را به‌روز کنم"
+    ],
+    example: "«سایت من: shirinkhone.ir» — کوتاه، ساده و مرتبط. برای انتشار، یک سرویس میزبانی ساده کافی است؛ لازم نیست همه‌چیز را خودت راه بیندازی.",
+    tip: "برای انتشار واقعی، میزبانی و آدرس سایت باید تنظیم شوند. اگر تازه‌کاری، از یک بزرگ‌تر یا مربی کمک بگیر.",
+    task: "یک آدرس کوتاه برای سایتت پیشنهاد بده.",
+    placeholder: "مثلاً my-sweet-shop...",
+    hint: "آدرسی کوتاه، ساده، به‌یادماندنی و بدون عددهای پیچیده انتخاب کن."
+  }
+];
+
+const siteTypes = [
+  ["shop", "🛍️", "فروشگاه اینترنتی", "فروش محصول و خدمات"],
+  ["personal", "👤", "سایت شخصی", "معرفی خودت و نمونه‌کارها"],
+  ["business", "🏢", "معرفی کسب‌وکار", "خدمات و راه‌های تماس"],
+  ["education", "🎓", "سایت آموزشی", "آموزش و یادگیری"],
+  ["blog", "✍️", "وبلاگ", "نوشتن و انتشار مطلب"],
+  ["other", "💡", "یک ایدهٔ دیگر", "ایدهٔ خودت را تعریف کن"]
+];
+
+const audiences = [
+  {
+    icon: "🧒",
+    title: "کودکان ۸ تا ۱۲ سال",
+    age: "با همراهی یک بزرگ‌تر",
+    text: "کودکان می‌توانند با کمک مامان، بابا یا معلم سایت بسازند. هدف اصلی این است که یاد بگیرند ایده را مرتب کنند، نه اینکه تنها با اینترنت کار کنند.",
+    tips: [
+      "درس‌ها را با صدای بلند بخوانید و با هم مثال بزنید",
+      "نام کامل، آدرس خانه و شماره تلفن را در سایت نگذارید",
+      "حداکثر یک درس در هر روز کافی است",
+      "به جای تصویر واقعی، از نقاشی یا شکل استفاده کنید"
+    ]
+  },
+  {
+    icon: "🧑‍🎓",
+    title: "نوجوانان ۱۲ تا ۱۸ سال",
+    age: "به‌تنهایی هم قابل استفاده است",
+    text: "برای ساخت نمونه‌کار، وبلاگ شخصی یا معرفی یک پروژهٔ مدرسه‌ای. می‌توانید مسیر را کامل بروید و خروجی HTML را برای تمرین نگه دارید.",
+    tips: [
+      "برای صفحهٔ شخصی، نام مستعار انتخاب کنید",
+      "قبل از انتشار، نظر یک بزرگ‌تر را بپرسید",
+      "از کارگاه برای پیش‌نمایش سریع استفاده کنید",
+      "پاسخ‌های درس‌ها را با دقت بنویسید تا بعداً به کارتان بیاید"
+    ]
+  },
+  {
+    icon: "🧑‍💼",
+    title: "بزرگسالان و صاحبان کسب‌وکار",
+    age: "بدون نیاز به پیش‌زمینهٔ فنی",
+    text: "اگر می‌خواهید سایت کوچکی برای معرفی کارتان داشته باشید، این مسیر کوتاه‌ترین راه از ایده به یک ساختار روشن است. تمرین «درخواست خوب» مخصوصاً به کارتان می‌آید.",
+    tips: [
+      "از کارگاه برای یک صفحهٔ معرفی شروع کنید",
+      "یک دکمهٔ اصلی انتخاب کنید: تماس، خرید یا رزرو",
+      "متن‌ها را کوتاه و بدون اصطلاح‌های پیچیده بنویسید",
+      "برای انتشار واقعی، میزبانی و دامنه را جداگانه بررسی کنید"
+    ]
+  },
+  {
+    icon: "👩‍🏫",
+    title: "والدین، معلمان و مربیان",
+    age: "برای کلاس یا خانه",
+    text: "این سایت می‌تواند مادهٔ یک جلسهٔ کلاسی ۳۰ دقیقه‌ای باشد: درس‌ها آماده و کوتاه هستند و برای کار گروهی طراحی شده‌اند.",
+    tips: [
+      "کلاس را سه‌نفره تقسیم کنید و به هر گروه یک بخش بدهید",
+      "از پرسش‌های صفحهٔ راهنما برای گفت‌وگو استفاده کنید",
+      "فایل HTML را با هم در یک رایانه باز کنید",
+      "قوانین حریم خصوصی را قبل از شروع مرور کنید"
+    ]
+  },
+  {
+    icon: "👵",
+    title: "تازه‌واردان دیجیتال و سالمندان",
+    age: "با متن بزرگ و آرام",
+    text: "اگر تازه با اینترنت آشنا شده‌اید، این سایت عجله‌ای ندارد. اندازهٔ متن را بزرگ کنید و در هر جلسه فقط یک درس را ببینید.",
+    tips: [
+      "با دکمهٔ A+ بالای صفحه، متن را بزرگ کنید",
+      "در هر جلسه یک درس کافی است",
+      "برای تمرین از نام کوچک استفاده کنید",
+      "اگر جایی سؤال داشتید، از یک آشنا کمک بگیرید"
+    ]
+  }
+];
+
+const sectionMap = [
+  { page: "home", icon: "⌂", title: "خانه", what: "معرفی سایت، راهنمای شروع، راهنمای سنی، مسیر و پرسش‌های متداول.", how: "برای فهمیدن اینکه از کجا شروع کنی، همین صفحه را بخوان." },
+  { page: "guide", icon: "؟", title: "راهنمای استفاده", what: "توضیح کامل هر بخش، نکات حریم خصوصی و راهنمای والدین و معلمان.", how: "وقتی مطمئن نیستی کاری را چطور انجام دهی." },
+  { page: "path", icon: "☷", title: "مسیر من", what: "شش قدم یادگیری به ترتیب، همراه با درصد پیشرفت.", how: "برای دیدن اینکه الان کجای مسیر هستی و قدم بعدی چیست." },
+  { page: "builder", icon: "✧", title: "کارگاه ساخت", what: "تغییر نام، عنوان، توضیح و رنگ؛ پیش‌نمایش زندهٔ صفحه.", how: "وقتی می‌خواهی ظاهر سایتت را امتحان کنی و خروجی HTML بگیری." },
+  { page: "progress", icon: "◷", title: "پیشرفت", what: "آمار درس‌ها، پاسخ‌های نوشته‌شده و نشان‌هایی که گرفته‌ای.", how: "برای مرور کارهای انجام‌شده و دیدن اینکه چقدر جلو رفته‌ای." },
+  { page: "profile", icon: "ع", title: "نمایه و تنظیمات", what: "اطلاعات پروژه، اندازهٔ متن و پاک‌کردن پیشرفت روی همین دستگاه.", how: "برای تنظیم اندازهٔ متن یا شروع دوباره از صفر." }
+];
+
+const outcomes = [
+  ["ایدهٔ روشن", "می‌توانی در یک جمله بگویی سایتت برای چه کسی و چه کاری است."],
+  ["درخواست دقیق", "با هدف، مخاطب، بخش‌ها و لحن، خواسته‌ات را واضح می‌نویسی."],
+  ["ظاهر خوانا", "رنگ و چیدمانی انتخاب می‌کنی که برای همه قابل خواندن باشد."],
+  ["صفحهٔ اول", "عنوان، توضیح و یک دکمهٔ اصلی می‌سازی که بازدیدکننده را هدایت می‌کند."],
+  ["بررسی منصفانه", "با یک چک‌لیست ساده، اشکال‌های سایتت را پیدا می‌کنی."],
+  ["آمادهٔ انتشار", "می‌دانی انتشار به چه چیزی نیاز دارد و از کجا شروع می‌شود."]
+];
+
+const healthyRules = [
+  ["🔒", "اطلاعات شخصی نگذار", "نام کامل، آدرس خانه، شماره تلفن، نام مدرسه و عکس خصوصی را در سایت عمومی نگذار. یک نام کوچک یا نام مستعار کافی است."],
+  ["💾", "پیشرفتت روی همین دستگاه است", "پاسخ‌ها در حافظهٔ مرورگر ذخیره می‌شوند. با پاک‌کردن داده‌های مرورگر یا تغییر دستگاه، از بین می‌روند."],
+  ["🤝", "برای انتشار مشورت کن", "قبل از اینکه چیزی را عمومی کنی، با یک بزرگ‌تر، معلم یا دوست باتجربه دربارهٔ محتوا و حریم خصوصی صحبت کن."],
+  ["🌱", "آرام و پیوسته یاد بگیر", "ده دقیقه در روز بهتر از دو ساعت یک‌بار در ماه است. قرار نیست همه‌چیز را در یک روز یاد بگیری."]
+];
+
+const faqItems = [
+  ["برای استفاده باید برنامه‌نویسی بلد باشم؟", "نه. تمام مسیر با زبان ساده نوشته شده و تمرین‌ها نوشتنی هستند. اگر بعداً به کد علاقه پیدا کردی، خروجی HTML کارگاه می‌تواند نقطهٔ شروع خوبی باشد."],
+  ["ثبت‌نام یا حساب کاربری لازم است؟", "نه. سایت بدون ثبت‌نام کار می‌کند و اطلاعاتت روی همین دستگاه می‌ماند. به همین دلیل از تو ایمیل یا شماره تلفن نمی‌خواهیم."],
+  ["چقدر طول می‌کشد کل مسیر را تمام کنم؟", "هر درس حدود ۳ تا ۵ دقیقه است؛ کل مسیر حدود ۳۰ دقیقه. لازم نیست یک‌جا تمامش کنی؛ می‌توانی هر روز یک قدم بروی."],
+  ["این سایت برای چه سنی مناسب است؟", "از حدود ۸ سال به بالا. برای کودکان ۸ تا ۱۲ سال، همراهی یک بزرگ‌تر را پیشنهاد می‌کنیم. برای نوجوانان و بزرگسالان هم بدون کمک قابل استفاده است."],
+  ["آیا واقعاً یک سایت واقعی می‌سازم؟", "در کارگاه ساخت می‌توانی یک صفحهٔ HTML ساده و قابل دانلود بسازی. انتشار روی اینترنت به میزبانی و دامنه نیاز دارد و در نسخهٔ فعلی خودکار نیست."],
+  ["هوش مصنوعی واقعی به سایت وصل است؟", "نه. دستیار داخل درس‌ها پاسخ‌های نمونه و راهنمایی‌های ثابت می‌دهد. اتصال واقعی به هوش مصنوعی نیاز به سرور امن دارد و کلید API نباید در صفحهٔ سایت باشد."],
+  ["چرا پیشرفتم بعد از بستن مرورگر ذخیره نشد؟", "احتمالاً در حالت ناشناس (Private) هستی یا داده‌های سایت پاک شده است. پیشرفت در حافظهٔ همان مرورگر و همان دستگاه ذخیره می‌شود."],
+  ["می‌توانم روی گوشی استفاده کنم؟", "بله. سایت واکنش‌گرا است و می‌توانی آن را به صفحهٔ اصلی گوشی اضافه کنی. این کار یک وب‌اپ نصب‌شده می‌سازد، نه اپ فروشگاه."],
+  ["متن برای من کوچک است، چه کنم؟", "دکمهٔ A+ در بالای صفحه سه حالت متن دارد: عادی، بزرگ و خیلی بزرگ. همین تنظیم در صفحهٔ نمایه هم هست."],
+  ["آیا اطلاعات من جایی ارسال می‌شود؟", "نه. هیچ درخواستی برای ذخیرهٔ پاسخ‌ها به سرور فرستاده نمی‌شود و حساب کاربری وجود ندارد. فقط فونت صفحه از سرویس گوگل بارگذاری می‌شود."],
+  ["اگر اشتباه نوشتم می‌توانم برگردم؟", "بله. از مسیر من هر درس تکمیل‌شده را می‌توانی دوباره باز کنی و پاسخ را اصلاح کنی. پیشرفت پاک نمی‌شود."]
+];
+
+const glossaryItems = [
+  ["سایت (وب‌سایت)", "مجموعه‌ای از صفحه‌های به‌هم‌پیوسته که با یک آدرس اینترنتی در دسترس هستند."],
+  ["صفحهٔ اصلی", "اولین صفحه‌ای که بیشتر بازدیدکننده‌ها می‌بینند و نقش ویترین سایت را دارد."],
+  ["میزبانی (هاست)", "فضایی روی یک رایانهٔ همیشه‌روشن که فایل‌های سایت روی آن نگه داشته می‌شود."],
+  ["دامنه", "آدرسی که مردم در مرورگر می‌نویسند، مثل shirinkhone.ir؛ مثل آدرس یک مغازه."],
+  ["پیش‌نمایش", "نمایش ظاهری سایت قبل از انتشار، برای اینکه ببینی چطور دیده می‌شود."],
+  ["پرامپت", "همان درخواستی که به هوش مصنوعی یا طراح می‌دهی تا کاری را انجام دهد."],
+  ["انتشار", "قرار دادن سایت روی اینترنت تا دیگران بتوانند با یک لینک آن را ببینند."],
+  ["دسترس‌پذیری", "طراحی سایت طوری که همه بتوانند از آن استفاده کنند؛ با متن بزرگ، کنتراست کافی و صفحه‌کلید."]
+];
+
+const presets = [
+  { id: "shop", label: "🛍️ فروشگاه کوچک", name: "شیرین‌خونه", title: "شیرینی خانگی، تازه و ساده", desc: "هر روز صبح شیرینی تازه می‌پزیم؛ منوی امروز را ببین و با یک پیام سفارش بده." },
+  { id: "personal", label: "👤 نمونه‌کار شخصی", name: "سارا محمدی", title: "چیزهایی می‌سازم که به کار می‌آیند", desc: "طراح رابط کاربری و عاشق سادگی؛ اینجا چند نمونه از کارهای من را می‌بینی." },
+  { id: "class", label: "🎓 کلاس آموزشی", name: "ریاضی، آرام", title: "ریاضی، آرام و قدم‌به‌قدم", desc: "برای دانش‌آموزانی که از ریاضی می‌ترسند؛ درس‌های کوتاه و تمرین‌های کوچک." }
+];
+
+const startSteps = [
+  {
+    num: "۱",
+    title: "نوع سایتت را انتخاب کن",
+    text: "در شروع از تو می‌پرسیم چه سایتی می‌خواهی بسازی: شخصی، فروشگاه، آموزشی یا وبلاگ. با همین انتخاب، مسیر مناسب تو ساخته می‌شود.",
+    action: "<button class=\"button secondary\" data-do=\"start\">انتخاب نوع سایت</button>",
+    note: "حدود ۱ دقیقه · بدون ثبت‌نام"
+  },
+  {
+    num: "۲",
+    title: "مسیر شش‌قدمی‌ات را ببین",
+    text: "در صفحهٔ «مسیر من» هر شش قدم و جای فعلی تو مشخص است. هر قدم یک تمرین کوتاه دارد و تا قدم قبل را کامل نکرده باشی، قدم بعدی قفل می‌ماند.",
+    action: "<button class=\"button secondary\" data-page=\"path\">دیدن مسیر من</button>",
+    note: "هر قدم ۳ تا ۵ دقیقه"
+  },
+  {
+    num: "۳",
+    title: "هر درس را انجام بده و بنویس",
+    text: "درس‌ها توضیح کوتاه، مثال، چک‌لیست و یک تمرین نوشتنی دارند. پاسخ‌هایت ذخیره می‌شوند تا بعداً بازبینی‌شان کنی.",
+    action: "<button class=\"button secondary\" data-do=\"start-lesson\">رفتن به درس اول</button>",
+    note: "با راهنما و دستیار داخل درس"
+  },
+  {
+    num: "۴",
+    title: "در کارگاه صفحه‌ات را بساز",
+    text: "در کارگاه، نام و عنوان و توضیح سایتت را تغییر بده، رنگ انتخاب کن و نتیجه را زنده ببین. در پایان می‌توانی یک فایل HTML ساده دریافت کنی.",
+    action: "<button class=\"button secondary\" data-page=\"builder\">ورود به کارگاه</button>",
+    note: "پیش‌نمایش زنده · خروجی قابل دانلود"
+  }
+];
+
+/* ---------------- صفحه‌ها ---------------- */
+
+function roadmapItems() {
+  return lessons.map(function (item, index) {
+    const completed = s.done.indexOf(index) !== -1;
+    const unlocked = index <= s.done.length;
+    const status = completed ? "تکمیل شده" : index === s.done.length ? "قدم بعدی تو" : "بعد از قدم قبلی";
+    return `<button class="roaditem ${completed ? "done" : ""} ${unlocked ? "" : "locked"}" data-lesson="${index}">
+      <span class="number" aria-hidden="true">${completed ? "✓" : num(index + 1)}</span>
+      <span class="rbody"><b>${item.title}</b><small>${status}</small></span>
+      <span class="rgo" aria-hidden="true">${unlocked ? "←" : "🔒"}</span>
+    </button>`;
+  }).join("");
+}
+
+function home() {
+  const pct = progressPercent();
+  const stepCards = startSteps.map(function (step) {
+    return `<article class="guidestep">
+      <span class="gnum" aria-hidden="true">${step.num}</span>
+      <h3>${step.title}</h3>
+      <p>${step.text}</p>
+      ${step.action}
+      <span class="do-note">${step.note}</span>
+    </article>`;
+  }).join("");
+  const audienceCards = audiences.map(function (item) {
+    return `<article class="audcard">
+      <span class="audicon" aria-hidden="true">${item.icon}</span>
+      <h3>${item.title}</h3>
+      <span class="audage">${item.age}</span>
+      <p>${item.text}</p>
+      <ul>${item.tips.map(function (tip) { return `<li>${tip}</li>`; }).join("")}</ul>
+    </article>`;
+  }).join("");
+  const mapRows = sectionMap.map(function (item) {
+    return `<button class="maprow" data-page="${item.page}">
+      <span class="mi" aria-hidden="true">${item.icon}</span>
+      <span class="mbody"><b>${item.title}</b><small>${item.what} ${item.how}</small></span>
+      <span class="mgo" aria-hidden="true">←</span>
+    </button>`;
+  }).join("");
+  const outcomeCards = outcomes.map(function (item) {
+    return `<div class="outcome"><i aria-hidden="true">✓</i><span><b>${item[0]}</b><small>${item[1]}</small></span></div>`;
+  }).join("");
+  const ruleCards = healthyRules.map(function (item) {
+    return `<article class="rulecard"><h3><i aria-hidden="true">${item[0]}</i>${item[1]}</h3><p>${item[2]}</p></article>`;
+  }).join("");
+  const faqList = faqItems.map(function (item) {
+    return `<details><summary>${item[0]}</summary><div class="ans"><p>${item[1]}</p></div></details>`;
+  }).join("");
+  const glossaryList = glossaryItems.map(function (item) {
+    return `<div class="gterm"><b>${item[0]}</b><span>${item[1]}</span></div>`;
+  }).join("");
+
+  main.innerHTML = `
+  <section class="hero">
+    <div class="hero-copy">
+      <span class="eyebrow">✦ آکادمی ساخت سایت برای همه</span>
+      <div class="hero-badges">
+        <span class="pill">رایگان و بدون ثبت‌نام</span>
+        <span class="pill soft">مناسب ۸ سال به بالا</span>
+        <span class="pill soft">فارسی و راست‌چین</span>
+      </div>
+      <h1>ایده‌ات را به یک سایت واقعی تبدیل کن؛ <span>قدم‌به‌قدم و بدون ترس.</span></h1>
+      <p class="lead">لازم نیست برنامه‌نویسی بلد باشی. در شش درس کوتاه یاد می‌گیری ایده‌ات را روشن کنی، درخواست درست بنویسی، ظاهر سایتت را انتخاب کنی و صفحهٔ اول را بسازی. هر درس چند دقیقه است و هر وقت خواستی می‌توانی برگردی.</p>
+      <div class="hero-cta">
+        <button class="button primary" data-do="start">از صفر شروع کن ←</button>
+        <button class="button outline" data-page="guide">راهنمای کامل استفاده</button>
+      </div>
+      <div class="trustbar">
+        <span class="trust"><i aria-hidden="true">✓</i>بدون نیاز به کدنویسی</span>
+        <span class="trust"><i aria-hidden="true">✓</i>اطلاعات روی دستگاه خودت</span>
+        <span class="trust"><i aria-hidden="true">✓</i>متن قابل بزرگ‌کردن</span>
+      </div>
+    </div>
+    <div class="hero-visual" aria-hidden="true">
+      <div class="float">✦ ایده‌ات دارد شکل می‌گیرد</div>
+      <div class="browser">
+        <div class="dots"><i></i><i></i><i></i></div>
+        <div class="mock">
+          <div class="mockline"></div>
+          <div class="mocktitle"></div>
+          <div class="mockline"></div>
+          <div class="mockbtn"></div>
+          <div class="mockblock"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="stat-strip">
+    <div><b>۶</b><small>درس کوتاه و کاربردی</small></div>
+    <div><b>۳۰</b><small>دقیقه برای کل مسیر</small></div>
+    <div><b>۸+</b><small>سال سن مناسب</small></div>
+    <div><b>۰</b><small>هزینه و بدون ثبت‌نام</small></div>
+  </div>
+
+  <section class="section">
+    <div class="section-head"><div><span class="eyebrow">سه کار ساده، به ترتیب</span><h2>این سایت چه کاری برای تو می‌کند؟</h2><p>قدم‌به‌قدم یک کلاس شلوغ نیست؛ سه کار را تکرار می‌کنیم تا سایتت شکل بگیرد.</p></div></div>
+    <div class="rules-grid">
+      <article class="rulecard"><h3><i aria-hidden="true">✦</i>یاد می‌گیری</h3><p>با توضیح‌های کوتاه و مثال‌های واقعی می‌فهمی سایت از چه بخش‌هایی ساخته می‌شود و چرا هر تصمیم مهم است.</p></article>
+      <article class="rulecard"><h3><i aria-hidden="true">⌘</i>تمرین می‌کنی</h3><p>همان لحظه آموخته‌هایت را در یک تمرین نوشتنی به کار می‌بری. پاسخ‌هایت ذخیره می‌شوند تا بعداً مرورشان کنی.</p></article>
+      <article class="rulecard"><h3><i aria-hidden="true">↗</i>می‌سازی</h3><p>در کارگاه ساخت، عنوان و رنگ سایتت را تغییر می‌دهی، پیش‌نمایش زنده می‌بینی و در پایان یک فایل HTML می‌گیری.</p></article>
+    </div>
+  </section>
+
+  <section class="section" id="guide-start">
+    <div class="section-head"><div><span class="eyebrow">راهنمای استفاده روی همین صفحه</span><h2>در چهار قدم شروع کن</h2><p>اگر اولین بار است اینجا می‌آیی، همین چهار قدم کافی است. هر قدم یک دکمه دارد که مستقیم تو را به همان بخش می‌برد.</p></div><button class="morelink" data-page="guide">راهنمای کامل ←</button></div>
+    <div class="guide-grid">${stepCards}</div>
+  </section>
+
+  <section class="section" id="audience">
+    <div class="section-head"><div><span class="eyebrow">برای هر سنی، یک راه شروع</span><h2>این سایت برای چه کسانی است؟</h2><p>قدم‌به‌قدم برای کودکان با همراهی بزرگ‌تر، نوجوانان، بزرگسالان، معلمان و تازه‌واردان دیجیتال نوشته شده است.</p></div></div>
+    <div class="audience-grid">${audienceCards}</div>
+  </section>
+
+  <section class="section" id="sections">
+    <div class="section-head"><div><span class="eyebrow">نقشهٔ سایت</span><h2>هر بخش چه کاری می‌کند؟</h2><p>هیچ گوشه‌ای پنهان نیست؛ این فهرست کامل بخش‌های سایت و کاربرد هرکدام است.</p></div></div>
+    <div class="sectionmap">${mapRows}</div>
+  </section>
+
+  <section class="section card roadmap" id="roadmap">
+    <div class="section-head"><div><span class="eyebrow">از ایده تا انتشار</span><h2>مسیر یادگیری تو</h2><p>شش قدم کوتاه که به ترتیب تو را از ایده به یک صفحهٔ آماده می‌رساند.</p></div><span class="pill">${num(pct)}٪ کامل</span></div>
+    <div class="roadmap-grid">${roadmapItems()}</div>
+    <button class="button secondary full" data-page="path">دیدن مسیر یادگیری ←</button>
+  </section>
+
+  <section class="section" id="outcomes">
+    <div class="section-head"><div><span class="eyebrow">نتیجهٔ یادگیری</span><h2>در پایان چه چیزی بلد می‌شوی؟</h2><p>این‌ها مهارت‌های واقعی‌اند؛ نه فقط چند اصطلاح حفظی.</p></div></div>
+    <div class="outcomes">${outcomeCards}</div>
+  </section>
+
+  <section class="section" id="rules">
+    <div class="section-head"><div><span class="eyebrow">استفادهٔ سالم و امن</span><h2>چهار قاعدهٔ مهم برای همهٔ سنین</h2><p>این چهار مورد را قبل از شروع بخوان؛ کمکت می‌کنند با خیال راحت‌تر یاد بگیری.</p></div></div>
+    <div class="rules-grid">${ruleCards}</div>
+  </section>
+
+  <section class="section" id="faq">
+    <div class="section-head"><div><span class="eyebrow">پرسش‌های متداول</span><h2>سؤال‌هایی که زیاد پرسیده می‌شود</h2><p>روی هر پرسش بزن تا پاسخش باز شود.</p></div></div>
+    <div class="faq">${faqList}</div>
+  </section>
+
+  <section class="section" id="glossary">
+    <div class="section-head"><div><span class="eyebrow">واژه‌نامهٔ ساده</span><h2>اصطلاح‌ها را به زبان آدمیزاد بشناس</h2><p>هر واژه‌ای که در مسیر می‌بینی، اینجا با یک جمله توضیح داده شده است.</p></div></div>
+    <div class="glossary">${glossaryList}</div>
+  </section>
+
+  <section class="cta">
+    <span class="eyebrow">هر سایت بزرگی از یک ایدهٔ کوچک شروع می‌شود</span>
+    <h2>اولین سایتت منتظر توست.</h2>
+    <p>همین حالا یک قدم بردار؛ لازم نیست کامل باشی، فقط کافی است شروع کنی.</p>
+    <div class="cta-actions">
+      <button class="button primary" data-do="start">شروع مسیر یادگیری ←</button>
+      <button class="button outline" data-page="guide">خواندن راهنما</button>
+    </div>
+  </section>`;
+}
+
+function guide() {
+  const toc = [
+    ["g-start", "شروع سریع در پنج دقیقه"],
+    ["g-map", "نقشهٔ بخش‌های سایت"],
+    ["g-lessons", "درس‌ها را چطور انجام بدهم؟"],
+    ["g-builder", "کارگاه ساخت و خروجی HTML"],
+    ["g-progress", "پیشرفت، نشان‌ها و ذخیره‌سازی"],
+    ["g-access", "متن بزرگ، صفحه‌کلید و دسترس‌پذیری"],
+    ["g-privacy", "حریم خصوصی و استفادهٔ سالم"],
+    ["g-parents", "راهنمای والدین و معلمان"],
+    ["g-trouble", "رفع اشکال‌های رایج"],
+    ["g-terms", "واژه‌نامهٔ ساده"]
+  ].map(function (item) {
+    return `<li><button data-scroll="${item[0]}">${item[1]}</button></li>`;
+  }).join("");
+
+  const tableRows = sectionMap.map(function (item) {
+    return `<tr><td>${item.title}</td><td>${item.what}</td><td>${item.how}</td></tr>`;
+  }).join("");
+
+  main.innerHTML = `
+  <section class="screen">
+    <button class="back" data-page="home">→ برگشت به خانه</button>
+    <span class="eyebrow">راهنمای کامل استفاده</span>
+    <h1>از کجا شروع کنم و هر بخش چه کاری می‌کند؟</h1>
+    <p class="intro">این صفحه، دفترچهٔ کامل قدم‌به‌قدم است: از اولین کلیک تا گرفتن خروجی سایت. اگر عجله داری، بخش «شروع سریع» را بخوان؛ اگر می‌خواهی همهچیز را بدانی، همهٔ بخش‌ها را ببین.</p>
+
+    <div class="toc">
+      <b>فهرست این راهنما</b>
+      <ol>${toc}</ol>
+    </div>
+
+    <article class="article">
+      <h2 id="g-start">۱. شروع سریع در پنج دقیقه</h2>
+      <p>لازم نیست چیزی نصب کنی یا حساب بسازی. همین حالا می‌توانی شروع کنی:</p>
+      <ol>
+        <li><b>نوع سایتت را انتخاب کن.</b> روی دکمهٔ «شروع مسیر یادگیری» بزن و از بین فروشگاه، سایت شخصی، کسب‌وکار، آموزشی، وبلاگ یا ایدهٔ خودت یکی را انتخاب کن.</li>
+        <li><b>اسم سایت و ایده‌ات را در یک جمله بنویس.</b> همین جمله، قطب‌نمای بقیهٔ مسیر است.</li>
+        <li><b>وارد درس اول شو.</b> توضیح را بخوان، چک‌لیست را ببین و تمرین را در کادر بنویس.</li>
+        <li><b>روی «انجام شد، ادامه بده» بزن.</b> با این کار قدمت ذخیره می‌شود و قدم بعدی باز می‌شود.</li>
+        <li><b>هر وقت خواستی، به کارگاه برو</b> و یک پیش‌نمایش از سایتت بساز.</li>
+      </ol>
+      <p>کل مسیر حدود ۳۰ دقیقه است، اما هیچ اجباری به تمام‌کردن یک‌جا نیست. حتی یک درس در روز هم کافی است.</p>
+
+      <h2 id="g-map">۲. نقشهٔ بخش‌های سایت</h2>
+      <p>در منوی بالا (روی گوشی، منوی پایین) این بخش‌ها را می‌بینی. جدول زیر خیلی خلاصه می‌گوید هرکدام به چه کاری می‌آید.</p>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>بخش</th><th>چه کاری می‌کند</th><th>کی سراغش برو</th></tr></thead>
+          <tbody>${tableRows}</tbody>
+        </table>
+      </div>
+
+      <h2 id="g-lessons">۳. درس‌ها را چطور انجام بدهم؟</h2>
+      <p>هر درس یک ساختار ثابت دارد تا همیشه بدانی کجایی:</p>
+      <ul>
+        <li><b>قدم چندم از شش</b> و زمان تقریبی درس، بالای صفحه نوشته شده است.</li>
+        <li><b>توضیح کوتاه</b> می‌گوید این قدم دربارهٔ چیست.</li>
+        <li><b>«چرا مهم است؟»</b> دلیل کار را توضیح می‌دهد؛ چون فهمیدن دلیل، یادگیری را ماندگار می‌کند.</li>
+        <li><b>چک‌لیست</b> فهرست چیزهایی است که باید آماده داشته باشی.</li>
+        <li><b>مثال</b> یک نمونهٔ واقعی و کوتاه نشان می‌دهد.</li>
+        <li><b>تمرین</b> جایی است که می‌نویسی. هر چه صادقانه‌تر بنویسی، نتیجه بهتر است.</li>
+        <li><b>«کمکم کن»</b> یک راهنمای کوچک باز می‌کند و دکمهٔ «راهنما» یک پاسخ نمونه نشان می‌دهد.</li>
+        <li><b>دستیار پایین صفحه</b> برای سؤال‌های کوتاه است. پاسخ‌هایش فعلاً نمونه‌اند و به هوش مصنوعی واقعی وصل نیستند.</li>
+      </ul>
+      <div class="callout"><b>نکته</b><p>قبل از رفتن به قدم بعد، حتماً روی «انجام شد» بزن. فقط با این کار پیشرفتت ذخیره می‌شود و قدم بعدی باز می‌شود. اگر بعداً نظرت عوض شد، از مسیر من همان درس را باز کن و پاسخ را اصلاح کن.</p></div>
+
+      <h2 id="g-builder">۴. کارگاه ساخت و خروجی HTML</h2>
+      <p>کارگاه، آزمایشگاه توست. در آن می‌توانی بدون نگرانی تغییر بدهی و نتیجه را فوری ببینی:</p>
+      <ul>
+        <li><b>نام، عنوان و توضیح</b> را بنویس؛ پیش‌نمایش همان لحظه به‌روز می‌شود.</li>
+        <li><b>رنگ اصلی</b> را از بین شش رنگ آرام انتخاب کن. رنگ‌ها طوری انتخاب شده‌اند که متن سفید روی آن‌ها خوانا بماند.</li>
+        <li><b>نمونه‌های آماده</b> سه شروع سریع هستند: فروشگاه کوچک، نمونه‌کار شخصی و کلاس آموزشی.</li>
+        <li><b>«دریافت فایل HTML»</b> یک صفحهٔ ساده، راست‌چین و واکنش‌گرا می‌سازد که می‌توانی روی رایانه‌ات باز کنی.</li>
+      </ul>
+      <p>این فایل یک صفحهٔ نمایشی است: فرم واقعی، پرداخت و انتشار خودکار ندارد. برای قرار دادن آن روی اینترنت به میزبانی نیاز داری و بهتر است این کار را با کمک یک بزرگ‌تر یا مربی انجام دهی.</p>
+
+      <h2 id="g-progress">۵. پیشرفت، نشان‌ها و ذخیره‌سازی</h2>
+      <p>در صفحهٔ «پیشرفت» می‌بینی چند درس را کامل کرده‌ای، چند پاسخ نوشته‌ای و چه نشان‌هایی گرفته‌ای. نشان‌ها برای تشویق‌اند، نه مسابقه:</p>
+      <ul>
+        <li><b>اولین قدم</b> با کامل‌کردن یک درس.</li>
+        <li><b>نیمهٔ راه</b> با کامل‌کردن سه درس.</li>
+        <li><b>مسیر کامل</b> با کامل‌کردن همهٔ شش درس.</li>
+        <li><b>نویسندهٔ دقیق</b> وقتی پاسخ همهٔ درس‌ها بیش از ۲۰ نویسه باشد.</li>
+      </ul>
+      <p>همهٔ این‌ها در حافظهٔ همین مرورگر ذخیره می‌شوند. اگر مرورگر را در حالت ناشناس باز کنی، داده‌های سایت را پاک کنی یا دستگاه را عوض کنی، پیشرفتت از بین می‌رود. هیچ نسخهٔ ابری یا حساب آنلاین وجود ندارد.</p>
+
+      <h2 id="g-access">۶. متن بزرگ، صفحه‌کلید و دسترس‌پذیری</h2>
+      <p>این سایت طوری ساخته شده که برای چشم‌ها و دست‌های مختلف قابل استفاده باشد:</p>
+      <ul>
+        <li>دکمهٔ <b>A+</b> در بالای صفحه، متن را بین سه حالت عادی، بزرگ و خیلی بزرگ تغییر می‌دهد.</li>
+        <li>همهٔ دکمه‌ها با <b>صفحه‌کلید</b> قابل استفاده‌اند؛ با <b>Tab</b> جابه‌جا شو و با <b>Enter</b> انتخاب کن.</li>
+        <li>هر عنصر قابل کلیک، حاشیهٔ فوکوس واضح دارد تا بدانی کجایی.</li>
+        <li>اگر در دستگاهت «کاهش حرکت» روشن باشد، انیمیشن‌ها خودکار خاموش می‌شوند.</li>
+        <li>اندازهٔ متن، فاصلهٔ خطوط و کنتراست رنگ‌ها برای خواندن طولانی تنظیم شده‌اند.</li>
+      </ul>
+
+      <h2 id="g-privacy">۷. حریم خصوصی و استفادهٔ سالم</h2>
+      <p>این سایت برای همهٔ سنین است؛ پس چند قاعدهٔ ساده اما مهم دارد:</p>
+      <ul>
+        <li>در تمرین‌ها و پیش‌نمایش، <b>اطلاعات شخصی واقعی</b> نگذار: نام کامل، آدرس خانه، شماره تلفن، نام مدرسه یا عکس خصوصی.</li>
+        <li>هیچ فرم ثبت‌نام یا ارسال اطلاعات وجود ندارد؛ پاسخ‌ها فقط روی دستگاه تو می‌مانند.</li>
+        <li>قبل از انتشار هر چیزی روی اینترنت، با یک بزرگ‌تر یا معلم مشورت کن.</li>
+        <li>اگر کسی در اینترنت از تو اطلاعات شخصی خواست، به بزرگ‌ترت بگو.</li>
+      </ul>
+
+      <h2 id="g-parents">۸. راهنمای والدین و معلمان</h2>
+      <p>یک جلسهٔ ۳۰ دقیقه‌ای پیشنهادی برای کلاس یا خانه:</p>
+      <ol>
+        <li><b>۵ دقیقه اول:</b> با هم صفحهٔ اصلی را ببینید و دربارهٔ این بپرسید: «اگر سایت داشتی، برای چه کسی بود و چه کاری برایش می‌کرد؟»</li>
+        <li><b>۵ دقیقه بعد:</b> نوع سایت را انتخاب کنید و ایده را در یک جمله بنویسید.</li>
+        <li><b>۱۰ دقیقه:</b> دو درس اول را با هم بخوانید؛ بگذارید کودک یا دانش‌آموز خودش تایپ کند.</li>
+        <li><b>۵ دقیقه:</b> در کارگاه، یک عنوان و رنگ انتخاب کنید و پیش‌نمایش را ببینید.</li>
+        <li><b>۵ دقیقه آخر:</b> دربارهٔ حریم خصوصی صحبت کنید: چه چیزی را هرگز در سایت عمومی نمی‌گذاریم؟</li>
+      </ol>
+      <p>برای ارزیابی، لازم نیست نمره بدهید؛ کافی است بپرسید «چه چیزی را تغییر می‌دادی؟» و «این سایت به چه کسی کمک می‌کند؟».</p>
+
+      <h2 id="g-trouble">۹. رفع اشکال‌های رایج</h2>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>مشکل</th><th>راه‌حل</th></tr></thead>
+          <tbody>
+            <tr><td>قدم بعدی قفل است</td><td>قدم فعلی را کامل کن و روی «انجام شد» بزن؛ بعد از آن قدم بعدی باز می‌شود.</td></tr>
+            <tr><td>پیشرفتم ذخیره نشد</td><td>از حالت ناشناس خارج شو و مطمئن شو مرورگر اجازهٔ ذخیرهٔ داده را می‌دهد.</td></tr>
+            <tr><td>متن برایم کوچک است</td><td>دکمهٔ A+ بالای صفحه را بزن یا از نمایه اندازهٔ متن را تغییر بده.</td></tr>
+            <tr><td>فایل HTML باز نمی‌شود</td><td>فایل را با مرورگر باز کن (کلیک راست → Open with → مرورگر) نه با ویرایشگر متن.</td></tr>
+            <tr><td>رنگ پیش‌نمایش عوض نمی‌شود</td><td>روی یکی از دایره‌های رنگ در کارگاه بزن؛ رنگ انتخابی با تیک مشخص می‌شود.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 id="g-terms">۱۰. واژه‌نامهٔ ساده</h2>
+      <p>این واژه‌ها در مسیر زیاد می‌بینی؛ معنی‌شان ساده است:</p>
+      <ul>
+        ${glossaryItems.map(function (item) { return `<li><b>${item[0]}:</b> ${item[1]}</li>`; }).join("")}
+      </ul>
+      <div class="divider"></div>
+      <p>سؤالی داری که اینجا نبود؟ به <button class="hint" data-do="goto-faq">پرسش‌های متداول صفحهٔ اصلی</button> سر بزن یا از یک بزرگ‌تر کمک بگیر.</p>
+    </article>
+
+    <section class="cta">
+      <span class="eyebrow">حالا که راه را می‌شناسی</span>
+      <h2>اولین قدم را بردار.</h2>
+      <p>یک نوع سایت انتخاب کن و مسیر شش‌قدمی‌ات را بساز. هیچ چیزی از دست نمی‌رود؛ هر وقت خواستی می‌توانی برگردی.</p>
+      <div class="cta-actions">
+        <button class="button primary" data-do="start">شروع مسیر ←</button>
+        <button class="button outline" data-page="path">مسیر من</button>
+      </div>
+    </section>
+  </section>`;
+}
+
+function onboarding() {
+  main.innerHTML = `
+  <section class="screen">
+    <button class="back" data-page="home">→ برگشت به خانه</button>
+    <span class="eyebrow">قدم اول از سه قدم</span>
+    <h1>دوست داری چه سایتی بسازی؟</h1>
+    <p class="intro">یکی را انتخاب کن؛ بعد مسیر مناسبش را می‌چینیم. تنها چیزی که لازم است کمی کنجکاوی است — نه دانش فنی.</p>
+
+    <div class="choices">
+      ${siteTypes.map(function (item) {
+        return `<button class="choice ${s.type === item[0] ? "selected" : ""}" data-type="${item[0]}" aria-pressed="${s.type === item[0]}">
+          <span aria-hidden="true">${item[1]}</span><b>${item[2]}</b><small>${item[3]}</small>
+        </button>`;
+      }).join("")}
+    </div>
+
+    <label class="label" for="name">اسم سایتت (اگر انتخاب کردی)</label>
+    <input id="name" class="input" value="${esc(s.name)}" placeholder="مثلاً شیرین‌خونه">
+
+    <label class="label" for="exp">چقدر با ساخت سایت آشنایی داری؟</label>
+    <select id="exp" class="select">
+      <option value="beginner" ${s.experience === "beginner" ? "selected" : ""}>تقریباً هیچ‌چیز نمی‌دانم</option>
+      <option value="some" ${s.experience === "some" ? "selected" : ""}>کمی تجربه دارم</option>
+      <option value="experienced" ${s.experience === "experienced" ? "selected" : ""}>قبلاً سایت ساخته‌ام</option>
+    </select>
+
+    <label class="label" for="idea">در یک جمله بگو سایتت برای چیست</label>
+    <textarea id="idea" class="textarea" placeholder="مثلاً می‌خواهم محصولات دست‌سازم را معرفی کنم...">${esc(s.idea)}</textarea>
+    <span class="note">این جمله را هر وقت خواستی می‌توانی تغییر بدهی. به هیچ‌کس ارسال نمی‌شود و فقط روی همین دستگاه می‌ماند.</span>
+
+    <button class="button primary full" data-do="save-onboarding">ساخت مسیر یادگیری ←</button>
+  </section>`;
+}
+
+function path() {
+  const pct = progressPercent();
+  const nextIndex = Math.min(s.done.length, 5);
+  main.innerHTML = `
+  <section class="screen">
+    <span class="eyebrow">مسیر شخصی تو</span>
+    <h1>آماده‌ای شروع کنیم؟</h1>
+    <p class="intro">هر بار فقط روی یک قدم تمرکز می‌کنیم. لازم نیست همه‌چیز را یک‌جا انجام بدهی.</p>
+
+    <div class="card" style="padding:18px;margin-bottom:14px">
+      <div class="section-head" style="margin-bottom:6px">
+        <div><b>${esc(s.name || typeName())}</b><small class="muted" style="display:block">مسیر یادگیری قدم‌به‌قدم</small></div>
+        <b style="color:var(--p)">${num(pct)}٪</b>
+      </div>
+      <div class="progressbar"><span style="width:${pct}%"></span></div>
+      <small class="muted">${num(s.done.length)} از ۶ قدم کامل شده · ${s.done.length === 6 ? "مسیر را کامل کرده‌ای!" : "قدم بعدی: " + lessons[nextIndex].title}</small>
+    </div>
+
+    <div class="roadmap-grid">${roadmapItems()}</div>
+
+    <button class="button primary full" data-do="continue-lesson">
+      ${s.done.length === 6 ? "مرور درس‌ها" : "ادامه یادگیری"} ←
+    </button>
+    <span class="note">اگر پاسخ درسی را عوض کردی، روی همان درس بزن و دوباره ذخیره کن. قدم‌های بعدی قفل نمی‌مانند.</span>
+
+    <div class="card" style="padding:16px;margin-top:16px">
+      <b style="font-size:.86rem">پروژهٔ فعلی</b>
+      <p class="muted" style="font-size:.82rem;margin:4px 0 0">${esc(s.idea || "هنوز ایده‌ات را ننوشته‌ای. در شروع، یک جمله دربارهٔ سایتت بنویس.")}</p>
+    </div>
+  </section>`;
+}
+
+function lesson() {
+  let index = typeof s.editLesson === "number" ? s.editLesson : Math.min(s.done.length, 5);
+  index = Math.max(0, Math.min(index, lessons.length - 1));
+  const item = lessons[index];
+  const dots = lessons.map(function (entry, dotIndex) {
+    const completed = s.done.indexOf(dotIndex) !== -1;
+    const current = dotIndex === index;
+    return `<button class="${completed ? "done" : ""} ${current ? "cur" : ""}" data-lesson="${dotIndex}" aria-label="قدم ${num(dotIndex + 1)}: ${entry.title}" ${completed || dotIndex <= s.done.length ? "" : "aria-disabled='true'"}>${completed ? "✓" : num(dotIndex + 1)}</button>`;
+  }).join("");
+
+  main.innerHTML = `
+  <section class="screen">
+    <button class="back" data-page="path">→ مسیر یادگیری</button>
+    <div class="lessonbox card">
+      <div class="lessonmeta"><span>قدم ${num(index + 1)} از ۶</span><span>⏱ حدود ${num(item.minutes)} دقیقه</span></div>
+      <div class="progressbar"><span style="width:${((index + 1) / 6) * 100}%"></span></div>
+      <div class="lesson-dots" aria-label="جابه‌جایی بین درس‌ها">${dots}</div>
+
+      <span class="eyebrow">درس کوتاه و کاربردی</span>
+      <h1>${item.title}</h1>
+      <p class="desc">${item.desc}</p>
+
+      <div class="lesson-goal"><b>چرا این قدم مهم است؟</b><p>${item.why}</p></div>
+
+      <h3 style="font-size:.9rem;margin:18px 0 4px">قبل از شروع، این‌ها را آماده داشته باش</h3>
+      <ul class="checklist">${item.checklist.map(function (line) { return `<li>${line}</li>`; }).join("")}</ul>
+
+      <div class="example"><b>یک مثال واقعی</b>${item.example}</div>
+      <div class="tip"><b>💡 نکتهٔ مهم</b>${item.tip}</div>
+
+      <label class="label" for="answer">${item.task}</label>
+      <textarea id="answer" class="textarea" data-answer-index="${index}" placeholder="${item.placeholder}">${esc(s.answers[index] || "")}</textarea>
+      <span class="note">پاسخ تو همان لحظه روی همین دستگاه ذخیره می‌شود.</span>
+      <button class="hint" data-do="hint">✦ کمکم کن</button>
+      <div id="hintarea" aria-live="polite"></div>
+
+      <div class="rowbuttons">
+        <button class="button secondary" data-do="help">راهنما</button>
+        <button class="button primary" data-do="complete" data-idx="${index}">${index === 5 ? "پایان مسیر" : "انجام شد، ادامه بده"} ←</button>
+      </div>
+    </div>
+
+    <div class="assistant">
+      <div class="assistanthead">
+        <span class="aiicon" aria-hidden="true">✧</span>
+        <div><b>همراه یادگیری تو</b><small>راهنمای ساده و قدم‌به‌قدم</small></div>
+      </div>
+      <div class="bubble" id="bubble">اگر جایی گیر کردی، سؤالت را بنویس. با هم ساده‌اش می‌کنیم.</div>
+      <div class="chatrow">
+        <input class="input" id="question" placeholder="چی برات مبهمه؟" aria-label="سؤال از دستیار">
+        <button class="button secondary" data-do="ask">بپرس</button>
+      </div>
+      <span class="note">این نسخه هنوز به هوش مصنوعی واقعی متصل نیست؛ پاسخ‌ها نمونه‌اند و اطلاعاتی ارسال نمی‌شود.</span>
+    </div>
+  </section>`;
+}
+
+function builder() {
+  const current = accents.find(function (item) { return item[0] === s.accent; }) || accents[0];
+  const name = s.previewName || s.name || "سایت من";
+  const swatches = accents.map(function (item) {
+    return `<button class="swatch ${item[0] === current[0] ? "on" : ""}" data-accent="${item[0]}" style="background:${item[1]}" aria-label="رنگ ${item[2]}" aria-pressed="${item[0] === current[0]}" title="${item[2]}"></button>`;
+  }).join("");
+  const presetButtons = presets.map(function (item) {
+    return `<button class="button outline" data-preset="${item.id}">${item.label}</button>`;
+  }).join("");
+
+  main.innerHTML = `
+  <section class="screen">
+    <span class="eyebrow">کارگاه ساخت سایت</span>
+    <h1>پیش‌نمایش سایتت را بساز.</h1>
+    <p class="intro">نام، عنوان و توضیح را تغییر بده و رنگ اصلی را انتخاب کن. پیش‌نمایش همان لحظه به‌روز می‌شود. در پایان می‌توانی یک صفحهٔ HTML ساده و قابل دانلود بگیری.</p>
+
+    <div class="card" style="padding:clamp(16px,3vw,24px)">
+      <b style="font-size:.86rem">شروع سریع با یک نمونه</b>
+      <div class="rowbuttons" style="margin-top:10px">${presetButtons}</div>
+
+      <div class="formgrid" style="margin-top:6px">
+        <div>
+          <label class="label" for="pname">نام سایت</label>
+          <input id="pname" class="input" value="${esc(s.previewName || s.name)}" placeholder="سایت من">
+        </div>
+        <div>
+          <label class="label" for="ptitle">عنوان اصلی صفحه</label>
+          <input id="ptitle" class="input" value="${esc(s.previewTitle)}" placeholder="یک عنوان واضح">
+        </div>
+      </div>
+      <label class="label" for="pdesc">توضیح کوتاه</label>
+      <textarea id="pdesc" class="textarea">${esc(s.previewDesc)}</textarea>
+
+      <label class="label" id="colorlabel">رنگ اصلی سایت</label>
+      <div class="swatches" role="group" aria-labelledby="colorlabel">${swatches}</div>
+      <span class="note">همهٔ این رنگ‌ها با متن سفید خوانا هستند. رنگ انتخابی الان: ${current[2]}.</span>
+
+      <div class="preview">
+        <div class="previewbar"><b id="pvname">${esc(name)}</b><span>پیش‌نمایش زنده</span></div>
+        <div class="previewpage" style="--acc:${current[1]}">
+          <span class="eyebrow">به سایت من خوش آمدی</span>
+          <h2 id="pvtitle">${esc(s.previewTitle)}</h2>
+          <p id="pvdesc">${esc(s.previewDesc)}</p>
+          <button class="button primary" data-do="preview-button">بیشتر بدان</button>
+          <div class="tiles"><div class="tile"></div><div class="tile"></div><div class="tile"></div></div>
+        </div>
+      </div>
+
+      <button class="button primary full" data-do="download-site">دریافت فایل HTML سایت</button>
+      <span class="note">فایل خروجی، نام، عنوان، توضیح و رنگ انتخابی را دارد و روی هر مرورگری باز می‌شود.</span>
+    </div>
+
+    <details class="card" style="margin-top:14px;padding:16px;border-radius:16px">
+      <summary style="cursor:pointer;font-weight:700;font-size:.86rem">قبل از انتشار، این چک‌لیست را ببین</summary>
+      <ul class="checklist" style="margin-top:10px">
+        <li>مطمئن شو شماره تلفن و آدرس شخصی روی صفحه نیست.</li>
+        <li>عنوان را یک بار با صدای بلند بخوان؛ باید در یک نفس فهمیده شود.</li>
+        <li>صفحه را روی صفحهٔ گوشی هم باز کن و از خوانا بودن متن مطمئن شو.</li>
+        <li>برای انتشار واقعی به میزبانی و دامنه نیاز داری؛ از یک بزرگ‌تر یا مربی کمک بگیر.</li>
+      </ul>
+    </details>
+
+    <div class="tip" style="margin-top:16px">
+      <b>محدودیت نسخهٔ فعلی</b>
+      این فایل یک صفحهٔ HTML ساده و قابل دانلود است؛ فرم فعال، پرداخت و انتشار خودکار ندارد. اتصال به هوش مصنوعی واقعی نیز نیاز به یک سرور امن دارد.
+    </div>
+  </section>`;
+}
+
+function progress() {
+  const pct = progressPercent();
+  const answerValues = lessons.map(function (item, index) { return s.answers[index] || ""; });
+  const wordCount = answerValues.join(" ").trim().split(/\s+/).filter(Boolean).length;
+  const allDetailed = s.done.length === 6 && lessons.every(function (item, index) { return (s.answers[index] || "").length >= 20; });
+  const badges = [
+    { icon: "🌱", title: "اولین قدم", text: "یک درس را کامل کن", earned: s.done.length >= 1 },
+    { icon: "🌿", title: "نیمهٔ راه", text: "سه درس را کامل کن", earned: s.done.length >= 3 },
+    { icon: "🏅", title: "مسیر کامل", text: "همهٔ شش درس", earned: s.done.length >= 6 },
+    { icon: "✍️", title: "نویسندهٔ دقیق", text: "پاسخ‌های بالای ۲۰ نویسه", earned: allDetailed }
+  ];
+  const badgeCards = badges.map(function (item) {
+    return `<div class="badge ${item.earned ? "earned" : "locked"}">
+      <span aria-hidden="true">${item.earned ? item.icon : "🔒"}</span>
+      <b>${item.title}</b><small>${item.earned ? "گرفته شد" : item.text}</small>
+    </div>`;
+  }).join("");
+  const answerItems = lessons.map(function (item, index) {
+    const answer = s.answers[index] || "";
+    return `<div class="answeritem"><b>${num(index + 1)}. ${item.title}</b><small>${answer ? esc(answer) : "هنوز پاسخی ننوشته‌ای."}</small></div>`;
+  }).join("");
+
+  main.innerHTML = `
+  <section class="screen">
+    <span class="eyebrow">مسیر پیشرفت تو</span>
+    <h1>ببین تا اینجا چه ساختی.</h1>
+    <p class="intro">هر تمرین کوچکی تو را یک قدم به سایت واقعی نزدیک‌تر می‌کند. اینجا خلاصهٔ کارهای توست.</p>
+
+    <div class="statgrid">
+      <div class="stat"><strong>${num(s.done.length)}</strong><small>درس کامل‌شده از ۶</small></div>
+      <div class="stat"><strong>${num(pct)}٪</strong><small>پیشرفت مسیر</small></div>
+      <div class="stat"><strong>${num(wordCount)}</strong><small>واژه نوشته‌شده</small></div>
+    </div>
+
+    <div class="card" style="padding:18px">
+      <div class="section-head" style="margin-bottom:4px"><div><b style="font-size:.9rem">قدم‌های تو</b><small class="muted" style="display:block">برای مربی‌ها هم خواناست</small></div><span class="pill">${num(pct)}٪</span></div>
+      <div class="progressbar"><span style="width:${pct}%"></span></div>
+      ${lessons.map(function (item, index) {
+        const completed = s.done.indexOf(index) !== -1;
+        return `<div class="settingrow"><span>${completed ? "✅" : "○"} ${item.title}</span><b>${completed ? "تکمیل شد" : index === s.done.length ? "قدم بعدی" : "در انتظار"}</b></div>`;
+      }).join("")}
+    </div>
+
+    <div class="card" style="padding:18px;margin-top:14px">
+      <b style="font-size:.9rem">نشان‌های تو</b>
+      <p class="muted" style="font-size:.79rem;margin:4px 0 2px">نشان‌ها برای تشویق‌اند، نه مسابقه. هر کدام یک عادت خوب را نشان می‌دهند.</p>
+      <div class="badgegrid">${badgeCards}</div>
+    </div>
+
+    <div class="card" style="padding:18px;margin-top:14px">
+      <b style="font-size:.9rem">پاسخ‌های تو</b>
+      <p class="muted" style="font-size:.79rem;margin:4px 0 0">با کلیک روی هر درس در مسیر، می‌توانی پاسخش را بازبینی و اصلاح کنی.</p>
+      <div class="answerlist">${answerItems}</div>
+    </div>
+
+    <button class="button primary full" data-page="path">برگشت به مسیر ←</button>
+  </section>`;
+}
+
+function profile() {
+  const sizeButtons = sizeList.map(function (item) {
+    return `<button data-size-set="${item}" class="${s.textSize === item ? "on" : ""}" aria-pressed="${s.textSize === item}">${sizeLabels[item]}</button>`;
+  }).join("");
+
+  main.innerHTML = `
+  <section class="screen">
+    <button class="back" data-page="home">→ خانه</button>
+    <div class="profile card">
+      <div class="assistanthead">
+        <span class="aiicon" aria-hidden="true">ع</span>
+        <div><h1>نمایهٔ من</h1><small>حساب آزمایشی روی همین دستگاه</small></div>
+      </div>
+
+      <div class="settingrow"><span>پروژهٔ فعلی</span><b>${esc(s.name || "اولین سایت من")}</b></div>
+      <div class="settingrow"><span>نوع سایت</span><b>${esc(typeName())}</b></div>
+      <div class="settingrow"><span>تجربهٔ قبلی</span><b>${esc(experiences[s.experience] || experiences.beginner)}</b></div>
+      <div class="settingrow"><span>قدم‌های کامل‌شده</span><b>${num(s.done.length)} از ۶</b></div>
+      <div class="settingrow"><span>اتصال هوش مصنوعی</span><b>هنوز متصل نیست</b></div>
+
+      <div class="settingrow">
+        <span>اندازهٔ متن</span>
+        <div class="sizes" role="group" aria-label="اندازهٔ متن">${sizeButtons}</div>
+      </div>
+
+      <div class="rowbuttons" style="margin-top:16px">
+        <button class="button secondary" data-page="guide">راهنمای استفاده</button>
+        <button class="button secondary" data-page="progress">پیشرفت و نشان‌ها</button>
+      </div>
+      <button class="danger full" data-do="reset">شروع از ابتدا و پاک‌کردن پیشرفت</button>
+
+      <p class="muted" style="font-size:.78rem;margin-top:14px;line-height:1.9">اطلاعات روی مرورگر همین دستگاه ذخیره می‌شود. این نسخه حساب آنلاین، همگام‌سازی یا ارسال اطلاعات به سرور ندارد. اگر متن را بزرگ‌تر می‌خواهی، از همین بخش هم می‌توانی تغییرش بدهی.</p>
+    </div>
+  </section>`;
+}
+
+/* ---------------- دستیار، خروجی و رویدادها ---------------- */
+
+function currentLessonIndex() {
+  const area = document.querySelector("#answer");
+  const fromData = area ? Number(area.dataset.answerIndex) : NaN;
+  if (!isNaN(fromData)) return Math.max(0, Math.min(fromData, lessons.length - 1));
+  return Math.min(s.done.length, 5);
+}
+
+function aiReply(question) {
+  const text = String(question || "").toLowerCase();
+  const answers = [
+    [["دامنه", "آدرس سایت"], "دامنه همان آدرسی است که مردم در مرورگر وارد می‌کنند تا سایتت را پیدا کنند؛ مثل آدرس یک مغازه در اینترنت. آدرس کوتاه و به‌یادماندنی بهتر است."],
+    [["میزبانی", "هاست"], "میزبانی یعنی فضایی روی یک رایانهٔ همیشه‌روشن که فایل‌های سایت روی آن می‌ماند تا سایت همیشه در دسترس باشد.\nبرای شروع، یک سرویس ساده کافی است."],
+    [["پرامپت", "درخواست"], "درخواستت را با چهار چیز واضح کن: سایت برای چه کاری است، چه کسی از آن استفاده می‌کند، چه بخش‌هایی لازم دارد و لحنش چطور باشد."],
+    [["رنگ", "ظاهر", "فونت"], "یک رنگ اصلی انتخاب کن و همهٔ دکمه‌های اصلی را با همان رنگ نگه دار. متن را تیره روی پس‌زمینهٔ روشن بگذار تا خوانا بماند."],
+    [["موبایل", "گوشی"], "بیشتر بازدیدکننده‌ها با گوشی می‌آیند. اندازهٔ متن را بزرگ و دکمه‌ها را درشت بگیر و صفحه را روی اندازهٔ گوشی هم امتحان کن."],
+    [["انتشار", "منتشر"], "انتشار یعنی گذاشتن سایت روی اینترنت تا دیگران با یک لینک ببینندش. برای این کار به میزبانی و دامنه نیاز داری و بهتر است با یک بزرگ‌تر یا مربی مشورت کنی."],
+    [["هوش مصنوعی", "ai"], "این نسخه به هوش مصنوعی واقعی وصل نیست و پاسخ‌ها نمونه‌اند. اتصال واقعی باید از سمت سرور انجام شود؛ کلید API نباید در صفحهٔ سایت باشد."],
+    [["پول", "هزینه", "رایگان"], "استفاده از این سایت رایگان است. هزینه‌های احتمالی مربوط به دامنه و میزبانی سایت خودت است، نه این آکادمی."],
+    [["کد", "برنامه‌نویسی"], "برای شروع لازم نیست کد بنویسی. اول هدف و ساختار سایتت را روشن کن؛ بعد هر بخش فنی را با یک مثال ساده یاد می‌گیری."],
+    [["امنیت", "حریم خصوصی", "اطلاعات شخصی"], "نام کامل، آدرس خانه، شماره تلفن و نام مدرسه را در سایت عمومی نگذار. پیشرفت تو هم فقط روی همین دستگاه ذخیره می‌شود."]
+  ];
+  for (let i = 0; i < answers.length; i += 1) {
+    const keywords = answers[i][0];
+    for (let j = 0; j < keywords.length; j += 1) {
+      if (text.indexOf(keywords[j]) !== -1) return answers[i][1];
+    }
+  }
+  return "سؤال خوبی است! بگو دقیقاً کدام قسمت برایت مبهم است: انتخاب نوع سایت، نوشتن درخواست، ظاهر، صفحهٔ اول یا انتشار؟ این نسخه به هوش مصنوعی واقعی وصل نیست و پاسخ‌هایش محدودند.";
+}
+
+function downloadSite() {
+  const accentItem = accents.find(function (item) { return item[0] === s.accent; }) || accents[0];
+  const accent = accentItem[1];
+  const name = esc(s.previewName || s.name || "سایت من");
+  const title = esc(s.previewTitle || "سایت من");
+  const desc = esc(s.previewDesc || "");
+  const html = `<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${title}</title>
+<style>
+  body{margin:0;background:#f7f8fc;color:#191d38;font-family:Tahoma,system-ui,sans-serif;line-height:1.9}
+  .wrap{max-width:780px;margin:40px auto;padding:0 20px}
+  .card{background:#fff;border:1px solid #e4e7f2;border-radius:24px;padding:36px 28px;text-align:center;box-shadow:0 14px 40px #2529570d}
+  .brand{display:inline-block;font-size:12px;font-weight:700;color:${accent};background:#eeebff;padding:5px 12px;border-radius:999px;margin-bottom:14px}
+  h1{font-size:28px;line-height:1.5;margin:0 0 12px}
+  p{color:#5c6379;font-size:15px;margin:0 auto 22px;max-width:46ch}
+  .button{display:inline-block;background:${accent};color:#fff;text-decoration:none;padding:12px 22px;border-radius:12px;font-weight:700}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:28px;text-align:right}
+  .cards div{background:#fbfbfe;border:1px solid #eef0f8;border-radius:16px;padding:16px;font-size:13px;color:#5c6379}
+  .cards b{display:block;color:#191d38;font-size:14px;margin-bottom:4px}
+  footer{text-align:center;font-size:12px;color:#5c6379;padding:22px 0 40px}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <section class="card">
+    <span class="brand">${name}</span>
+    <h1>${title}</h1>
+    <p>${desc}</p>
+    <a class="button" href="mailto:hello@example.com">ارتباط با ما</a>
+    <div class="cards">
+      <div><b>دربارهٔ ما</b>یک توضیح کوتاه دربارهٔ خودتان بنویسید.</div>
+      <div><b>خدمات</b>سه خدمت یا محصول اصلی را معرفی کنید.</div>
+      <div><b>تماس</b>راه ارتباطی و ساعت پاسخ‌گویی را بیاورید.</div>
+    </div>
+  </section>
+  <footer>${name} — ساخته‌شده با قدم‌به‌قدم</footer>
+</main>
+</body>
+</html>`;
+  const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "my-website.html";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+  ping("فایل HTML ساخته شد؛ برای انتشار، آن را روی یک سرویس میزبانی قرار بده.");
+}
+
+document.addEventListener("click", function (event) {
+  const pageButton = event.target.closest("[data-page]");
+  if (pageButton) { go(pageButton.dataset.page); return; }
+
+  const scrollButton = event.target.closest("[data-scroll]");
+  if (scrollButton) { scrollToId(scrollButton.dataset.scroll); return; }
+
+  const typeButton = event.target.closest("[data-type]");
+  if (typeButton) {
+    const nameField = document.querySelector("#name");
+    const ideaField = document.querySelector("#idea");
+    const expField = document.querySelector("#exp");
+    if (nameField) s.name = nameField.value.trim();
+    if (ideaField) s.idea = ideaField.value.trim();
+    if (expField) s.experience = expField.value;
+    s.type = typeButton.dataset.type;
+    save();
+    onboarding();
+    return;
+  }
+
+  const accentButton = event.target.closest("[data-accent]");
+  if (accentButton) {
+    s.accent = accentButton.dataset.accent;
+    save();
+    builder();
+    return;
+  }
+
+  const presetButton = event.target.closest("[data-preset]");
+  if (presetButton) {
+    const preset = presets.find(function (item) { return item.id === presetButton.dataset.preset; });
+    if (preset) {
+      s.previewName = preset.name;
+      s.previewTitle = preset.title;
+      s.previewDesc = preset.desc;
+      save();
+      builder();
+      ping("نمونهٔ «" + preset.name + "» آماده شد؛ می‌توانی ویرایشش کنی.");
+    }
+    return;
+  }
+
+  const sizeButton = event.target.closest("[data-size-set]");
+  if (sizeButton) {
+    s.textSize = sizeButton.dataset.sizeSet;
+    save();
+    applySize();
+    if (s.page === "profile") profile();
+    ping("اندازهٔ متن: " + sizeLabels[s.textSize]);
+    return;
+  }
+
+  const lessonButton = event.target.closest("[data-lesson]");
+  if (lessonButton) {
+    const index = Number(lessonButton.dataset.lesson);
+    if (index <= s.done.length) {
+      s.editLesson = index;
+      s.page = "lesson";
+      save();
+      render();
+      window.scrollTo({ top: 0, behavior: motionOff() ? "auto" : "smooth" });
+    } else {
+      ping("اول قدم قبلی را انجام بده.");
+    }
+    return;
+  }
+
+  const actionButton = event.target.closest("[data-do]");
+  if (!actionButton) return;
+
+  switch (actionButton.dataset.do) {
+    case "start":
+      go("onboarding");
+      break;
+    case "start-lesson":
+      if (!s.type || !s.idea) {
+        ping("اول نوع سایت و ایده‌ات را مشخص کن.");
+        go("onboarding");
+      } else {
+        go("lesson");
+      }
+      break;
+    case "text-size": {
+      const next = sizeList[(sizeList.indexOf(s.textSize) + 1) % sizeList.length];
+      s.textSize = next;
+      save();
+      applySize();
+      if (s.page === "profile") profile();
+      ping("اندازهٔ متن: " + sizeLabels[next]);
+      break;
+    }
+    case "goto-faq": goHomeSection("faq"); break;
+    case "goto-audience": goHomeSection("audience"); break;
+    case "goto-glossary": goHomeSection("glossary"); break;
+    case "goto-guide-start": goHomeSection("guide-start"); break;
+    case "save-onboarding": {
+      const nameField = document.querySelector("#name");
+      const expField = document.querySelector("#exp");
+      const ideaField = document.querySelector("#idea");
+      s.name = nameField ? nameField.value.trim() : s.name;
+      s.experience = expField ? expField.value : s.experience;
+      s.idea = ideaField ? ideaField.value.trim() : s.idea;
+      if (!s.type) { ping("اول یک نوع سایت انتخاب کن."); break; }
+      if (!s.idea) { ping("در یک جمله بگو سایتت برای چیست."); break; }
+      save();
+      go("lesson");
+      break;
+    }
+    case "hint": {
+      const area = document.querySelector("#hintarea");
+      if (area) area.innerHTML = `<div class="tip"><b>یک راهنمای کوچک</b>${lessons[currentLessonIndex()].hint}</div>`;
+      break;
+    }
+    case "help": {
+      const area = document.querySelector("#hintarea");
+      const answerField = document.querySelector("#answer");
+      const source = answerField && answerField.value.trim() ? answerField.value : (s.idea || lessons[currentLessonIndex()].title);
+      if (area) area.innerHTML = `<div class="bubble">${esc(aiReply(source))}</div><span class="note">پاسخ نمونه، بدون اتصال به سرویس هوش مصنوعی</span>`;
+      break;
+    }
+    case "ask": {
+      const field = document.querySelector("#question");
+      const bubble = document.querySelector("#bubble");
+      if (!field || !bubble) break;
+      const question = field.value.trim();
+      if (!question) { ping("اول سؤالت را بنویس."); break; }
+      bubble.textContent = aiReply(question);
+      field.value = "";
+      break;
+    }
+    case "complete": {
+      const index = Number(actionButton.dataset.idx);
+      const answerField = document.querySelector("#answer");
+      const answer = answerField ? answerField.value.trim() : "";
+      if (!answer) { ping("اول تمرین کوتاه را انجام بده."); break; }
+      s.answers[index] = answer;
+      if (s.done.indexOf(index) === -1) s.done.push(index);
+      s.done.sort(function (a, b) { return a - b; });
+      delete s.editLesson;
+      save();
+      if (s.done.length === 6) {
+        go("progress");
+        ping("آفرین! مسیر اولیه را کامل کردی.");
+      } else {
+        go("lesson");
+        ping("ذخیره شد. قدم بعدی باز شد.");
+      }
+      break;
+    }
+    case "download-site": downloadSite(); break;
+    case "preview-button": ping("این دکمه در پیش‌نمایش نمایشی است."); break;
+    case "reset":
+      if (window.confirm("همهٔ پیشرفت، پاسخ‌ها و تنظیمات پاک شود؟")) {
+        try { localStorage.removeItem(KEY); localStorage.removeItem(OLD_KEY); } catch (error) { /* بی‌اهمیت */ }
+        s = Object.assign({}, base);
+        save();
+        applySize();
+        render();
+        ping("شروع تازه آماده است.");
+      }
+      break;
+    default:
+      break;
+  }
+});
+
+document.addEventListener("input", function (event) {
+  const field = event.target;
+  if (field.id === "pname") {
+    s.previewName = field.value;
+    save();
+    const label = document.querySelector("#pvname");
+    if (label) label.textContent = field.value || "سایت من";
+  } else if (field.id === "ptitle") {
+    s.previewTitle = field.value;
+    save();
+    const title = document.querySelector("#pvtitle");
+    if (title) title.textContent = field.value || "سایت من";
+  } else if (field.id === "pdesc") {
+    s.previewDesc = field.value;
+    save();
+    const desc = document.querySelector("#pvdesc");
+    if (desc) desc.textContent = field.value;
+  } else if (field.id === "answer") {
+    const index = Number(field.dataset.answerIndex);
+    if (!isNaN(index)) { s.answers[index] = field.value; save(); }
+  } else if (field.id === "name") {
+    s.name = field.value;
+    save();
+  } else if (field.id === "idea") {
+    s.idea = field.value;
+    save();
+  }
+});
+
+document.addEventListener("change", function (event) {
+  if (event.target.id === "exp") {
+    s.experience = event.target.value;
+    save();
+  }
+});
+
+if ("serviceWorker" in navigator && location.protocol.indexOf("http") === 0) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("./sw.js").catch(function () { /* آفلاین بدون سرویس‌ورکر هم کار می‌کند */ });
+  });
+}
+
+render();
+})();
